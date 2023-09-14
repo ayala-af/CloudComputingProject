@@ -1,12 +1,23 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
+
+
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - CloudComputingProject</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/CloudComputingProject.styles.css" asp-append-version="true" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Ice cream Website</title>
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- swiper -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+    <!-- lightgallery -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery-js/1.4.0/css/lightgallery.min.css">
+    <!-- custom css -->
+    <link rel="stylesheet" href="~/css/style.css">
+
 </head>
 <body>
     <header>
@@ -17,17 +28,22 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+                <section class="header">
+
+                    <a href="#" class="logo"> <i class="fas fa-ice-cream"></i> Ice cream </a>
+
+                    <nav class="navbar">
+                        <a href="#home">home</a>
+                        <a href="#about">about</a>
+                        <a href="#menu">menu</a>
+                        <a href="#gallery">gallery</a>
+                        <a href="#reviews">reviews</a>
+                        <a href="#order">order</a>
                     <partial name="_LoginPartial" />
-                </div>
+                    </nav>
+                    <div id="menu-btn" class="fas fa-bars"></div>
+              
+            </section>
             </div>
         </nav>
     </header>
