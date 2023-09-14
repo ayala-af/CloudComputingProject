@@ -39,6 +39,22 @@
                         <a href="#gallery">gallery</a>
                         <a href="#reviews">reviews</a>
                         <a href="#order">order</a>
+                      
+                       @*  //קשור לאוטנטיקציה-אפרת לא לגעת!! login! do not change! *@
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                            <li class="nav-item">
+                                 <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="GetAll">Products</a>
+                            </li>
+                            }
+                            
+                           @if(User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Inventory" asp-action="GetAll">Inventory</a>
+                            </li>
+                        }
+                       
                     <partial name="_LoginPartial" />
                     </nav>
                     <div id="menu-btn" class="fas fa-bars"></div>
