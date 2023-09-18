@@ -1,14 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@200;300;400;500;600&display=swap');
 
-:root{
+:root {
+    /*--main-color: #7759c1;
+    --primary-color: #a6f7ff;
+    --bg-color: #0c174c;*/
     --main-color: #736454;
     --primary-color: #eff1f3;
     --bg-color: #f6f8fb;
     --hover: #5a4d3e;
-    --black:#222;
-    --white:#fff;
-    --border:.1rem solid #aaa;
-    --box-shadow:0 .5rem 1rem rgba(0,0,0,.1);
+    --black: #222;
+    --white: #fff;
+    --border: .1rem solid #aaa;
+    --box-shadow: 0 .5rem 1rem rgba(0,0,0,.1);
 }
 
 *{
@@ -18,7 +21,6 @@
     outline: none;
     text-decoration: none;
     transition: all 0.4s cubic-bezier(.43,1.1,.62,1.08);
-    text-transform: capitalize;
 }
 
 html{

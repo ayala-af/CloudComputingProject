@@ -4,7 +4,7 @@
 
 
 <head>
-    <title>@ViewData["Title"] - CloudComputingProject</title>
+    <!--title>@ViewData["Title"] - CloudComputingProject</!--title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,23 +23,25 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CloudComputingProject</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <section class="header">
 
-                    <a href="#" class="logo"> <i class="fas fa-ice-cream"></i> Ice cream </a>
+                    <a asp-area="" asp-action="Index" asp-controller="Home" class="logo"> <i class="fas fa-ice-cream"></i> Ice cream </a>
 
                     <nav class="navbar">
-                        <a href="#home">home</a>
-                        <a href="#about">about</a>
+                        <a asp-area="" asp-action="Index" asp-controller="Home">Home</a>
+                        <a asp-area="" asp-action="About" asp-controller="Home">About</a>
+                        <a asp-area="" asp-action="Menu" asp-controller="Home">Menu</a>
+                        <a asp-area="" asp-action="Order" asp-controller="Home">Order</a>
+                        @* <a href="#about">about</a>
                         <a href="#menu">menu</a>
                         <a href="#gallery">gallery</a>
                         <a href="#reviews">reviews</a>
-                        <a href="#order">order</a>
-                    <partial name="_LoginPartial" />
+                        <a href="#order">order</a> *@
+                        <partial name="_LoginPartial"/>
                     </nav>
                     <div id="menu-btn" class="fas fa-bars"></div>
               
@@ -53,11 +55,54 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - CloudComputingProject - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- footer -->
+    <section class="footer">
+
+        <div class="icons-container">
+
+            <div class="icons">
+                <i class="fas fa-map"></i>
+                <h3>address</h3>
+                <p>
+                    230 Point of the Pines Dr <br>
+                    Colorado Springs <br>
+                    United States
+                </p>
+            </div>
+
+            <div class="icons">
+                <i class="fas fa-phone"></i>
+                <h3>phone</h3>
+                <p>+125-847-578</p>
+                <p>+125-847-578</p>
+            </div>
+
+            <div class="icons">
+                <i class="fas fa-envelope"></i>
+                <h3>email</h3>
+                <a href="#" class="link">ninjashub@gmail.com</a>
+            </div>
+
+            <div class="icons">
+                <i class="fas fa-clock"></i>
+                <h3>opening hours</h3>
+                <p>monday - friday: 2:00 - 12:00 <br> Saturday: 2:00 - 11:00</p>
+            </div>
+
         </div>
-    </footer>
+
+        <div class="share">
+            <a href="#" class="fab fa-facebook-f"></a>
+            <a href="#" class="fab fa-twitter"></a>
+            <a href="#" class="fab fa-instagram"></a>
+            <a href="#" class="fab fa-linkedin"></a>
+        </div>
+
+        <div class="credit">created by <span>ninjashub</span> | all right reserved!</div>
+
+    </section>
+    <!-- footer -->
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
