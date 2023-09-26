@@ -1,0 +1,49 @@
+﻿@model IEnumerable<CloudComputingProject.Models.Product>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="card mb-4" style="margin: 10px;">
+                <img src="@item.Url" alt="Product Image" class="card-img-top" style="max-height: 200px;" />
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                    <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
+                    <p class="card-text"><strong>Price: $@Html.DisplayFor(modelItem => item.Price)</strong></p>
+                    @if (item.IsAvailable)
+                    {
+                        <p class="card-text text-success">Available</p>
+                    }
+                    else
+                    {
+                        <p class="card-text text-danger">Not Available</p>
+                    }
+                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-primary">Details</a>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Add an empty product card as the last item -->
+    <div class="col-md-4">
+        <div class="card mb-4" style="margin: 10px;">
+            <!-- You can customize this empty product card as needed -->
+            <div class="card-body">
+                <h5 class="card-title">Create New Product</h5>
+                <p class="card-text">Click the button below to create a new product.</p>
+                <a asp-action="Create" class="btn btn-primary">Create</a>
+            </div>
+        </div>
+    </div>
+</div>

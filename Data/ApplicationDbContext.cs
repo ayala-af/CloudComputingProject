@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using CloudComputingProject.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CloudComputingProject.Data
@@ -11,5 +12,9 @@ namespace CloudComputingProject.Data
             
         }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Flavor> Flavors { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<CloudComputingProject.Models.Order>? Order { get; set; }
+        public DbSet<CloudComputingProject.Models.OrderDetail>? OrderDetail { get; set; }
     }
 }

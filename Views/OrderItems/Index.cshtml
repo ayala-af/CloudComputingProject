@@ -1,0 +1,79 @@
+﻿@model IEnumerable<CloudComputingProject.Models.OrderItem>
+@using Microsoft.EntityFrameworkCore;
+@using CloudComputingProject.Data;
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var products = await ViewContext.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>().Products.ToListAsync();
+    var flavors = await ViewContext.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>().Flavors.ToListAsync();
+
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Flavors)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderId)
+            </th>
+            <th>
+                Product Image
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductId)
+                </td>
+                <td>
+                    @foreach (var flavor in item.Flavors.Split(',')) // Split the flavors string
+                    {
+                        @if (item.Flavors.Count() > 0)
+                        {
+                            var flavors2 = flavors.Where(p => p.Id.ToString() == flavor);
+                            foreach(var f in flavors2)
+                            {
+                                <img src="@f.FlavorUrl" alt="@f.FlavorName " class="img-thumbnail" />
+                            }
+                        }
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderId)
+                </td>
+                <td>
+                    @if (item.ProductId > 0)
+                    {
+                        var product = products.FirstOrDefault(p=>p.Id==item.ProductId) ;
+                        if (product != null)
+                        {
+                            <img src="@product.Url" alt="@product.Name" class="img-thumbnail" />
+                        }
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

@@ -1,0 +1,93 @@
+﻿@using CloudComputingProject.Data;
+@model CloudComputingProject.Models.OrderItem
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>OrderItem</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProductId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Flavors)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Flavors)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.OrderId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OrderId)
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <h4>Product Details</h4>
+    <hr />
+    @if (!string.IsNullOrEmpty(Model.Flavors))
+    {
+        <h5>Flavors:</h5>
+        <ul>
+            @foreach (var flavorId in Model.Flavors.Split(' '))
+            {
+                var flavor = await ViewContext.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>().Flavors.FindAsync(Convert.ToInt32(flavorId));
+                if (flavor != null)
+                {
+                    <li>
+                        <img src="@flavor.FlavorUrl" alt="@flavor.FlavorName" width="100" height="100" />
+                        @Html.DisplayFor(model => flavor.FlavorName)
+                    </li>
+                }
+            }
+        </ul>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.Flavors))
+    {
+        <h5>Flavors:</h5>
+        <ul>
+            @foreach (var flavorId in Model.Flavors.Split(','))
+            {
+                if (int.TryParse(flavorId, out var flavorIdInt))
+                {
+                    var flavor = await ViewContext.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>().Flavors.FindAsync(flavorIdInt);
+                    if (flavor != null)
+                    {
+                        <li>
+                            <img src="@flavor.FlavorUrl" alt="@flavor.FlavorName" width="100" height="100" />
+                            @Html.DisplayFor(model => flavor.FlavorName)
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li>
+                        Invalid Flavor ID: @flavorId
+                    </li>
+                }
+            }
+        </ul>
+    }
+
+
+    
+}
+
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
