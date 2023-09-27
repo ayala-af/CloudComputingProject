@@ -9,9 +9,9 @@ namespace CloudComputingProject.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "categoty",
+                name: "Category",
                 table: "Products",
-                newName: "Categoty");
+                newName: "Category");
 
             migrationBuilder.AddColumn<int>(
                 name: "OrderId",
@@ -28,9 +28,9 @@ namespace CloudComputingProject.Data.Migrations
                 table: "OrderItems");
 
             migrationBuilder.RenameColumn(
-                name: "Categoty",
+                name: "Category",
                 table: "Products",
-                newName: "categoty");
+                newName: "Category");
         }
     }
 }

@@ -10,6 +10,10 @@ using CloudComputingProject.Models;
 
 namespace CloudComputingProject.Controllers
 {
+    /// <summary>
+    /// This is the regular controller which generated when using mvc entity framework controller
+    /// based on the model: flavor
+    /// </summary>
     public class FlavorsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -56,7 +60,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FlavorName,Categoty,IsAvailable,FlavorUrl")] Flavor flavor)
+        public async Task<IActionResult> Create([Bind("Id,FlavorName,Category,IsAvailable,FlavorUrl")] Flavor flavor)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +92,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FlavorName,Categoty,IsAvailable,FlavorUrl")] Flavor flavor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FlavorName,Category,IsAvailable,FlavorUrl")] Flavor flavor)
         {
             if (id != flavor.Id)
             {

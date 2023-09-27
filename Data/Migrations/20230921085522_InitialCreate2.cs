@@ -18,7 +18,7 @@ namespace CloudComputingProject.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FlavorName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Categoty = table.Column<int>(type: "int", nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     FlavorUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -53,7 +53,7 @@ namespace CloudComputingProject.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    categoty = table.Column<int>(type: "int", nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<double>(type: "float", nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false)

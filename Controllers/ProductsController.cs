@@ -10,6 +10,9 @@ using CloudComputingProject.Models;
 
 namespace CloudComputingProject.Controllers
 {
+    /// <summary>
+    /// this controller managing Crud actions for product model
+    /// </summary>
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -63,7 +66,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Categoty,Url,Price,IsAvailable")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Category,Url,Price,IsAvailable")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -96,7 +99,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Categoty,Url,Price,IsAvailable")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Category,Url,Price,IsAvailable")] Product product)
         {
             if (id != product.Id)
             {

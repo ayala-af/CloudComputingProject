@@ -12,50 +12,54 @@ using CloudComputingProject.Services;
 
 namespace CloudComputingProject.Controllers
 {
+    
     public class OrderItemsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private string GetProductImageUrl(int productId)
-        {
-            var product = _context.Products.FirstOrDefault(p => p.Id == productId);
-            return product?.Url ?? "/path/to/default-image.jpg"; // Provide a default image path if needed
-        }
-
-        private List<string> GetFlavorImages(string flavors)
-        {
-            var flavorIds = flavors.Split(',').Select(int.Parse).ToList();
-            var flavorImages = _context.Flavors
-                .Where(f => flavorIds.Contains(f.Id))
-                .Select(f => f.FlavorUrl)
-                .ToList();
-            return flavorImages;
-        }
+        
 
 
         public OrderItemsController(ApplicationDbContext context)
         {
             _context = context;
         }
-
+      
         // GET: OrderItems
         public async Task<IActionResult> Index()
         {
             return View(await _context.OrderItems.ToListAsync());
         }
+        /// <summary>
+        /// This function called when user choose product to add to order
+        /// 
+        /// </summary>
+        /// <param name="productId">This is the ID of the product the user choose to add</param>
+        /// <returns>open view of createOrderItem to create orderItem based on the productID parameter</returns>
 		public async Task<IActionResult> CreateOrderItem(int? productId)
 		{
 			if (productId == null || _context.Products == null)
 			{
 				return NotFound();
 			}
-			var product = _context.Products.FirstOrDefault(p => p.Id == productId);
 			var orderItem = new OrderItem();//create new orderItem for this product
-			orderItem.ProductId = (int)productId;
-			var flavors = _context.Flavors.ToList().Where(p => p.Categoty == product.Categoty);
-			ViewBag.Flavors = new MultiSelectList(flavors, "Id", "FlavorName");
+			orderItem.ProductId = (int)productId;//assign the productID value 
+			var product = _context.Products.FirstOrDefault(p => p.Id == productId);//find this product in the exist products, in order to know the category
+            var flavors = _context.Flavors.ToList().Where(p => p.Category == product.Category);//make list of flavors with correct category
+        /// Create a MultiSelectList object for contain a dropdown list with flavors.
+        /// The 'flavors' collection contains the available flavor options.
+        /// The 'Id' is what is name of the key of flavor model
+        /// The 'FlavorName' is what i want to desplay
 
-			return View(orderItem);
-		}
+            ViewBag.Flavors = new MultiSelectList(flavors, "Id", "FlavorName");
+
+			return View(orderItem);//send the orderItem to the view of CreateOrderItem
+        }
+        /// <summary>
+        /// Save the new orderItem 
+        /// </summary>
+        /// <param name="orderItem"></param>
+        /// <param name="flavors"></param>
+        /// <returns></returns>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CreateOrderItem(OrderItem orderItem, List<int> flavors)
@@ -77,13 +81,13 @@ namespace CloudComputingProject.Controllers
 				return RedirectToAction(nameof(Index));
 
 			}
-
-			// Repopulate ViewBag.Products and ViewBag.Flavors in case of model validation errors
-			var productsList = _context.Products.ToList();
+            
+          
 
 			ViewBag.Flavors = new MultiSelectList(_context.Flavors.ToList(), "Id", "FlavorName");
-
-			return View(productsList);
+            ///the products for manue
+            var productsList = _context.Products.ToList();
+            return View(productsList);
 		}
 
 		// GET: OrderItems/Details/5

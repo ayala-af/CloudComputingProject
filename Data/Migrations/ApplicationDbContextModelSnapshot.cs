@@ -98,7 +98,7 @@ namespace CloudComputingProject.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Categoty")
+                    b.Property<int>("Category")
                         .HasColumnType("int");
 
                     b.Property<string>("FlavorName")
@@ -207,7 +207,7 @@ namespace CloudComputingProject.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Categoty")
+                    b.Property<int>("Category")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -215,6 +215,9 @@ namespace CloudComputingProject.Data.Migrations
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("MaxFlavorsNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
