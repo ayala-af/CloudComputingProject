@@ -1,8 +1,12 @@
-﻿namespace CloudComputingProject.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CloudComputingProject.Models
 {
     public class OrderItem
     {
-        public int Id { get; set; }
+		
+		public int Id { get; set; }
        public int ProductId { get; set; }
        public string Flavors { get; set; }  
        //One order has many OrderItems

@@ -26,6 +26,27 @@ namespace CloudComputingProject.Controllers
                           View(await _context.Products.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Products'  is null.");
         }
+        public async Task<IActionResult> ProductsMenu()
+        {
+              return _context.Products != null ? 
+                          View(await _context.Products.ToListAsync()) :
+                          Problem("Entity set 'ApplicationDbContext.Products'  is null.");
+        }
+
+        public async Task<IActionResult> CreateOrderItem(int? id)
+        {
+            if (id == null || _context.Products == null)
+            {
+                return NotFound();
+            }
+            var product = _context.Products.FirstOrDefault(p => p.Id == id);
+            var orderItem = new OrderItem();//create new orderItem for this product
+            orderItem.ProductId = (int)id;
+			var flavors = _context.Flavors.ToList().Where(p=>p.Categoty==product.Categoty);
+			ViewBag.Flavors = new MultiSelectList(flavors, "Id", "FlavorName");
+
+			return View(orderItem);
+        }
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -66,9 +87,37 @@ namespace CloudComputingProject.Controllers
             }
             return View(product);
         }
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CreateOrderItem(OrderItem orderItem, List<int> flavors)
+		{
+			if (ModelState.IsValid)
+			{
+				// Convert the list of selected flavors to a comma-separated string
+				string flavorsString = string.Join(",", flavors);
 
-        // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+				// Assign the selected flavors to the orderItem
+				orderItem.Flavors = flavorsString;
+
+				// Add the order item to the context
+				_context.OrderItems.Add(orderItem);
+
+				// Save the changes to the context
+				await _context.SaveChangesAsync();
+
+				return RedirectToAction(nameof(Index));
+			}
+
+			// Repopulate ViewBag.Products and ViewBag.Flavors in case of model validation errors
+			var productsList = _context.Products.ToList();
+
+			ViewBag.Flavors = new MultiSelectList(_context.Flavors.ToList(), "Id", "FlavorName");
+
+			return View(productsList);
+		}
+
+		// GET: Products/Edit/5
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Products == null)
             {

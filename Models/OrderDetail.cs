@@ -10,7 +10,7 @@
         public DateTime OrderDate { get; set; }
 
         public double Temperature { get; set; }
-
+       
        
     }
 }

@@ -36,23 +36,7 @@
 <div>
     <h4>Product Details</h4>
     <hr />
-    @if (!string.IsNullOrEmpty(Model.Flavors))
-    {
-        <h5>Flavors:</h5>
-        <ul>
-            @foreach (var flavorId in Model.Flavors.Split(' '))
-            {
-                var flavor = await ViewContext.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>().Flavors.FindAsync(Convert.ToInt32(flavorId));
-                if (flavor != null)
-                {
-                    <li>
-                        <img src="@flavor.FlavorUrl" alt="@flavor.FlavorName" width="100" height="100" />
-                        @Html.DisplayFor(model => flavor.FlavorName)
-                    </li>
-                }
-            }
-        </ul>
-    }
+ 
 
     @if (!string.IsNullOrEmpty(Model.Flavors))
     {

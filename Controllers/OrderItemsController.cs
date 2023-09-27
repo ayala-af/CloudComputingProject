@@ -75,11 +75,7 @@ namespace CloudComputingProject.Controllers
         }
 
 
-        //// GET: OrderItems/Create
-        //public IActionResult Create()
-        //{
-        //    return View();
-        //}
+    
 
         // POST: OrderItems/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -118,36 +114,7 @@ namespace CloudComputingProject.Controllers
         }
 
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("ProductId,Flavors")] LogicalOrderItem logicalOrderItem)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        // Get the list of flavors that were selected by the user
-        //        List<int> flavors =logicalOrderItem.flavors;
 
-        //        // Convert the list of flavors to a string
-        //        string flavorsString = Services.Converters.ListToString(flavors); 
-
-        //        // Create a new instance of the physical order item model
-        //        OrderItem orderItem = new OrderItem()
-        //        {
-        //            ProductId = logicalOrderItem.ProductId,
-        //            Flavors = flavorsString,
-        //            OrderId = logicalOrderItem.OrderId
-        //        };
-
-        //        // Add the order item to the context
-        //        _context.OrderItems.Add(orderItem);
-
-        //        // Save the changes to the context
-        //        await _context.SaveChangesAsync();
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(logicalOrderItem);
-        //}
 
 
         // GET: OrderItems/Edit/5
@@ -163,8 +130,23 @@ namespace CloudComputingProject.Controllers
             {
                 return NotFound();
             }
+
+            // Fetch the products and flavors for the dropdowns
+            var flavors = _context.Flavors.ToList();
+            var products = _context.Products.ToList();
+
+            // Create a MultiSelectList with the fetched flavors
+            ViewBag.Flavors = new MultiSelectList(flavors, "Id", "FlavorName");
+
+            // Create a SelectList with the fetched products
+            ViewBag.Products = new SelectList(products, "Id", "Name");
+
+            // Set the selected values for the product and flavors dropdowns based on the orderItem
+            ViewBag.SelectedFlavors = orderItem.Flavors.Split(',').Select(int.Parse).ToList();
+
             return View(orderItem);
         }
+
 
         // POST: OrderItems/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.

@@ -6,7 +6,8 @@ namespace CloudComputingProject.Models
     public enum Categoty
     {
         IceCream,
-        Frozen
+        Frozen,
+        Other
     }
     public class Product
     {
