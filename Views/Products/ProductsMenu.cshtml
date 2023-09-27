@@ -27,7 +27,9 @@
                     {
                         <p class="card-text text-danger">Not Available</p>
                     }
-                    <a href="@Url.Action("CreateOrderItem", new { id = item.Id })" class="btn btn-primary">Add To Order</a>
+
+                    <a href="@Url.Action("CreateOrderItem", "OrderItems", new { productId = item.Id })" class="btn btn-primary">Add To Order</a>
+
                 </div>
             </div>
         </div>

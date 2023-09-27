@@ -42,10 +42,52 @@ namespace CloudComputingProject.Controllers
         {
             return View(await _context.OrderItems.ToListAsync());
         }
-    
+		public async Task<IActionResult> CreateOrderItem(int? productId)
+		{
+			if (productId == null || _context.Products == null)
+			{
+				return NotFound();
+			}
+			var product = _context.Products.FirstOrDefault(p => p.Id == productId);
+			var orderItem = new OrderItem();//create new orderItem for this product
+			orderItem.ProductId = (int)productId;
+			var flavors = _context.Flavors.ToList().Where(p => p.Categoty == product.Categoty);
+			ViewBag.Flavors = new MultiSelectList(flavors, "Id", "FlavorName");
 
-        // GET: OrderItems/Details/5
-        public async Task<IActionResult> Details(int? id)
+			return View(orderItem);
+		}
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CreateOrderItem(OrderItem orderItem, List<int> flavors)
+		{
+			if (ModelState.IsValid)
+			{
+				// Convert the list of selected flavors to a comma-separated string
+				string flavorsString = string.Join(",", flavors);
+
+				// Assign the selected flavors to the orderItem
+				orderItem.Flavors = flavorsString;
+
+				// Add the order item to the context
+				_context.OrderItems.Add(orderItem);
+
+				// Save the changes to the context
+				await _context.SaveChangesAsync();
+
+				return RedirectToAction(nameof(Index));
+
+			}
+
+			// Repopulate ViewBag.Products and ViewBag.Flavors in case of model validation errors
+			var productsList = _context.Products.ToList();
+
+			ViewBag.Flavors = new MultiSelectList(_context.Flavors.ToList(), "Id", "FlavorName");
+
+			return View(productsList);
+		}
+
+		// GET: OrderItems/Details/5
+		public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.OrderItems == null)
             {
