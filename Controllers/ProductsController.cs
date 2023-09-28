@@ -17,11 +17,13 @@ namespace CloudComputingProject.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public ProductsController(ApplicationDbContext context)
+        private readonly IWebHostEnvironment _env;
+      
+        public ProductsController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
-
         // GET: Products
         public async Task<IActionResult> Index()
         {
@@ -58,6 +60,7 @@ namespace CloudComputingProject.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
+
             return View();
         }
 
@@ -66,13 +69,34 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Category,Url,Price,IsAvailable")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Category,Url,Price,IsAvailable")] Product product, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // Check if an image file was uploaded
+                if ((imageFile != null && imageFile.Length > 0))
+                {
+                    // Save the image to the wwwroot/Uploads directory
+                    var uploadsFolder = Path.Combine(_env.WebRootPath, "Uploads");
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await imageFile.CopyToAsync(stream);
+                    }
+
+                    // Update the Product1 entity's ImageUrl property with the URL of the saved image
+                    product.Url = "/Uploads/" + uniqueFileName;
+                    // Save the product to the database, including the ImageUrl
+                    // ...
+                    _context.Add(product);
+                    await _context.SaveChangesAsync();
+
+                    // Redirect to the index page or another appropriate action
+                }
+                return RedirectToAction("Index");
+
+
             }
             return View(product);
         }
