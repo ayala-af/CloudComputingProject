@@ -9,7 +9,8 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="CreateOrderItem">
+        <form asp-action="CreateOrderItem" method="post">
+            @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group">
@@ -21,14 +22,19 @@
 
             <div class="form-group">
                 <label asp-for="Flavors" class="control-label">Select Flavors (Hold Ctrl/Cmd to select multiple)</label>
-                <select asp-for="Flavors" asp-items="@(ViewBag.Flavors)" multiple="multiple" class="form-control"></select>
+                <div id="flavor-selection">
+                    @foreach (var flavor in ViewBag.Flavors)
+                    {
+                        <div class="checkbox">
+                            <input type="checkbox" class="flavor-checkbox" name="flavors" data-max-flavors="@ViewBag.product.MaxFlavorsNumber" value="@flavor.Id" />
+                            <label for="SelectedFlavors">@flavor.FlavorName</label>
+                            <img src="@flavor.FlavorUrl" alt="@flavor.FlavorName" height="70px" width="70px" />
+                        </div>
+                    }
+                </div>
                 <span asp-validation-for="Flavors" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="OrderId" class="control-label">Order ID</label>
-                <input asp-for="OrderId" class="form-control" />
-                <span asp-validation-for="OrderId" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -37,10 +43,24 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Products" asp-action="ProductsMenu">Back to List</a>
 </div>
 
 @section Scripts {
+    <script>
+        // JavaScript code to handle flavor selection
+        $(document).ready(function () {
+            $('.flavor-checkbox').on('change', function () {
+                var selectedFlavors = $('.flavor-checkbox:checked');
+                var maxFlavors = $(this).data('max-flavors');
+
+                if (selectedFlavors.length > maxFlavors) {
+                    $(this).prop('checked', false);
+                    alert('You can select up to ' + maxFlavors + ' flavors.');
+                }
+            });
+        });
+    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

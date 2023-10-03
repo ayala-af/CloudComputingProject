@@ -23,6 +23,7 @@ namespace CloudComputingProject.Models
         public string Flavors { get; set; }  
        //One order has many OrderItems
        public int OrderId { get; set; }
+        public string UserId { get; set; } = "000";
 
     }
     /*

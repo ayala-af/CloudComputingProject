@@ -5,29 +5,52 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authorization;
+using CloudComputingProject.Services;
 using CloudComputingProject.Data;
 using CloudComputingProject.Models;
-using CloudComputingProject.Services;
+
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace CloudComputingProject.Controllers
 {
-    
+
     public class OrderItemsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        
-
-
-        public OrderItemsController(ApplicationDbContext context)
+        // private readonly ICartRepository _cartRepo;
+        //  private readonly UserManager<IdentityUser> _userManager;
+        //  private readonly IHttpContextAccessor _httpContextAccessor;
+        //private ShoppingCart _shoppingCart;
+        public OrderItemsController(ApplicationDbContext context /*,ICartRepository cartRepo*//*IHttpContextAccessor httpContextAccessor,UserManager<IdentityUser> userManager*/)
         {
             _context = context;
+            //   _cartRepo = cartRepo;
+            //_shoppingCart = new ShoppingCart
+            //{
+            //    CartDetails = new List<OrderItem> { }
+            //};
         }
-      
+
+
+
         // GET: OrderItems
         public async Task<IActionResult> Index()
         {
             return View(await _context.OrderItems.ToListAsync());
+        }
+        // GET: OrderItems
+        public async Task<IActionResult> Cart()
+        {
+            var filteredItems = await _context.OrderItems
+                  .Where(item => item.UserId == GetUserId())
+                  .ToListAsync();
+
+
+            return View(filteredItems);
         }
         /// <summary>
         /// This function called when user choose product to add to order
@@ -35,25 +58,27 @@ namespace CloudComputingProject.Controllers
         /// </summary>
         /// <param name="productId">This is the ID of the product the user choose to add</param>
         /// <returns>open view of createOrderItem to create orderItem based on the productID parameter</returns>
-		public async Task<IActionResult> CreateOrderItem(int? productId)
-		{
-			if (productId == null || _context.Products == null)
-			{
-				return NotFound();
-			}
-			var orderItem = new OrderItem();//create new orderItem for this product
-			orderItem.ProductId = (int)productId;//assign the productID value 
-			var product = _context.Products.FirstOrDefault(p => p.Id == productId);//find this product in the exist products, in order to know the category
-            var flavors = _context.Flavors.ToList().Where(p => p.Category == product.Category);//make list of flavors with correct category
-        /// Create a MultiSelectList object for contain a dropdown list with flavors.
-        /// The 'flavors' collection contains the available flavor options.
-        /// The 'Id' is what is name of the key of flavor model
-        /// The 'FlavorName' is what i want to desplay
+        public async Task<IActionResult> CreateOrderItem(int? productId)
+        {
+            if (productId == null || _context.Products == null)
+            {
+                return NotFound();
+            }
 
-            ViewBag.Flavors = new MultiSelectList(flavors, "Id", "FlavorName");
+            var orderItem = new OrderItem();
+            orderItem.ProductId = (int)productId;
 
-			return View(orderItem);//send the orderItem to the view of CreateOrderItem
+          
+
+            var product = _context.Products.FirstOrDefault(p => p.Id == productId);
+            var flavors = _context.Flavors.ToList().Where(p => p.Category == product.Category);
+
+            ViewBag.Flavors = flavors;
+            ViewBag.Product = product;
+            return View(orderItem);
         }
+
+
         /// <summary>
         /// Save the new orderItem 
         /// </summary>
@@ -61,37 +86,47 @@ namespace CloudComputingProject.Controllers
         /// <param name="flavors"></param>
         /// <returns></returns>
 		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> CreateOrderItem(OrderItem orderItem, List<int> flavors)
-		{
-			if (ModelState.IsValid)
-			{
-				// Convert the list of selected flavors to a comma-separated string
-				string flavorsString = string.Join(",", flavors);
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateOrderItem(OrderItem orderItem, List<int> flavors)
+        {
 
-				// Assign the selected flavors to the orderItem
-				orderItem.Flavors = flavorsString;
+            // Convert the list of selected flavors to a comma-separated string
+            string flavorsString = string.Join(",", flavors);
 
-				// Add the order item to the context
-				_context.OrderItems.Add(orderItem);
+            // Assign the selected flavors to the orderItem
+            orderItem.Flavors = flavorsString;
+            // Get the current user's ID from the User.Identity
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
 
-				// Save the changes to the context
-				await _context.SaveChangesAsync();
+            if (userIdClaim == null)
+            {
+                // Handle the case where the user's ID claim is not found
+                return RedirectToAction("Login", "Account"); // Redirect to the login page or handle as needed
+            }
 
-				return RedirectToAction(nameof(Index));
+            var currentUserId = userIdClaim.Value;
 
-			}
-            
-          
+            // Assign the current user's ID to the orderItem
+            orderItem.UserId = currentUserId;
+            // Add the order item to the context
+            _context.OrderItems.Add(orderItem);
 
-			ViewBag.Flavors = new MultiSelectList(_context.Flavors.ToList(), "Id", "FlavorName");
-            ///the products for manue
-            var productsList = _context.Products.ToList();
-            return View(productsList);
-		}
+            // Save the changes to the context
+            await _context.SaveChangesAsync();
 
-		// GET: OrderItems/Details/5
-		public async Task<IActionResult> Details(int? id)
+            return RedirectToAction("Cart");
+
+
+
+
+            //ViewBag.Flavors = new MultiSelectList(_context.Flavors.ToList(), "Id", "FlavorName");
+            //         ///the products for manue
+            //         var productsList = _context.Products.ToList();
+            //         return View(productsList);
+        }
+
+        // GET: OrderItems/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.OrderItems == null)
             {
@@ -121,7 +156,7 @@ namespace CloudComputingProject.Controllers
         }
 
 
-    
+
 
         // POST: OrderItems/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -261,14 +296,26 @@ namespace CloudComputingProject.Controllers
             {
                 _context.OrderItems.Remove(orderItem);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool OrderItemExists(int id)
         {
-          return (_context.OrderItems?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.OrderItems?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        private string GetUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null)
+            {
+                // Handle the case where the user's ID claim is not found
+                return "000"; // Redirect to the login page or handle as needed
+            }
+
+            return userIdClaim.Value;
         }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CloudComputingProject.Data;
 using CloudComputingProject.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CloudComputingProject.Controllers
 {
@@ -14,6 +15,9 @@ namespace CloudComputingProject.Controllers
     /// This is the regular controller which generated when using mvc entity framework controller
     /// based on the model: flavor
     /// </summary>
+    /// 
+
+    [Authorize(Roles = "Admin")]
     public class FlavorsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -26,9 +30,9 @@ namespace CloudComputingProject.Controllers
         // GET: Flavors
         public async Task<IActionResult> Index()
         {
-              return _context.Flavors != null ? 
-                          View(await _context.Flavors.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Flavors'  is null.");
+            return _context.Flavors != null ?
+                        View(await _context.Flavors.ToListAsync()) :
+                        Problem("Entity set 'ApplicationDbContext.Flavors'  is null.");
         }
 
         // GET: Flavors/Details/5
@@ -52,6 +56,8 @@ namespace CloudComputingProject.Controllers
         // GET: Flavors/Create
         public IActionResult Create()
         {
+
+            ViewBag.Categories = GetCategories();
             return View();
         }
 
@@ -78,7 +84,7 @@ namespace CloudComputingProject.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.Categories = GetCategories();
             var flavor = await _context.Flavors.FindAsync(id);
             if (flavor == null)
             {
@@ -154,14 +160,25 @@ namespace CloudComputingProject.Controllers
             {
                 _context.Flavors.Remove(flavor);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
+        private List<SelectListItem> GetCategories()
+        {
+            var categories = Enum.GetValues(typeof(CloudComputingProject.Models.Category))
+                 .Cast<CloudComputingProject.Models.Category>()
+                 .Select(c => new SelectListItem
+                 {
+                     Text = c.ToString(),
+                     Value = ((int)c).ToString()
+                 })
+                 .ToList();
+            return categories;
+        }
         private bool FlavorExists(int id)
         {
-          return (_context.Flavors?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Flavors?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

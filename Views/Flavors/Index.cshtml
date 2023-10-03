@@ -8,47 +8,43 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FlavorName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsAvailable)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FlavorUrl)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FlavorName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsAvailable)
-            </td>
-            <td>
-                    <img src="@item.FlavorUrl " alt="Flavor Image" class="card-img-top" style="max-height: 200px;" />
-                </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="card mb-4" style="margin: 10px;">
+                <img src="@item.FlavorUrl" alt="Flavor Image" class="card-img-top" style="max-height: 200px;" />
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.FlavorName)</h5>
+                    <p class="card-text">Category: @Html.DisplayFor(modelItem => item.Category)</p>
+                    @if (item.IsAvailable)
+                    {
+                        <p class="card-text text-success">Available</p>
+                    }
+                    else
+                    {
+                        <p class="card-text text-danger">Not Available</p>
+                    }
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-primary">Delete</a>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Add an empty flavor card as the last item -->
+    <div class="col-md-4">
+        <div class="card mb-4" style="margin: 10px;">
+            <!-- You can customize this empty flavor card as needed -->
+            <div class="card-body">
+                <h5 class="card-title">Create New Flavor</h5>
+                <p class="card-text">Click the button below to create a new flavor.</p>
+                <a asp-action="Create" class="btn btn-primary">Create</a>
+            </div>
+        </div>
+    </div>
+</div>

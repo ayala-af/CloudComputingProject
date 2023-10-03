@@ -4,127 +4,198 @@
 
 
 <head>
-    <!--title>@ViewData["Title"] - CloudComputingProject</!--title>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Ice cream Website</title>
-    <!-- font awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- swiper -->
-    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
-    <!-- lightgallery -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery-js/1.4.0/css/lightgallery.min.css">
-    <!-- custom css -->
-    <link rel="stylesheet" href="~/css/style.css">
+	<!--title>@ViewData["Title"] - CloudComputingProject</!--title>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Responsive Ice cream Website</title>
+	<!-- font awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<!-- swiper -->
+	<link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+	<!-- lightgallery -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery-js/1.4.0/css/lightgallery.min.css">
+	<!-- custom css -->
+	@*     <link rel="stylesheet" href="~/css/style.css">
+	*@
+	<link href="~/css/bootstrap.min.css" rel="stylesheet" />
+	<style>
+		.content-container {
+			display: flex;
+			flex-direction: row;
+		}
 
+		.footer {
+			margin-top: 20px; /* Adjust the margin as needed to push the footer down */
+		}
+	</style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <section class="header">
+	<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+		<div class="container-fluid">
 
-                    <a asp-area="" asp-action="Index" asp-controller="Home" class="logo"> <i class="fas fa-ice-cream"></i> Ice cream </a>
 
-                    <nav class="navbar">
-                        <a asp-area="" asp-action="Index" asp-controller="Home">Home</a>
-                        <a asp-area="" asp-action="About" asp-controller="Home">About</a>
-                        <a asp-area="" asp-action="ProductsMenu" asp-controller="Products">Menu</a>
-                        <a asp-area="" asp-action="Order" asp-controller="Home">Order</a>
-                        <a asp-area="" asp-action="Index" asp-controller="Flavors">Flavors</a>
-                        <a asp-area="" asp-action="Index" asp-controller="OrderItems">OrderItems</a>
-                        <a asp-area="" asp-action="Index" asp-controller="Products">Products</a>
-                        @* <a href="#about">about</a>
-                        <a href="#menu">menu</a>
-                        <a href="#gallery">gallery</a>
-                        <a href="#reviews">reviews</a>
-                        <a href="#order">order</a>
-                      
-                       @*  //קשור לאוטנטיקציה-אפרת לא לגעת!! login! do not change! *@
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                            <li class="nav-item">
-                                 <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="GetAll">Products</a>
-                            </li>
-                            }
-                            
-                           @if(User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Inventory" asp-action="GetAll">Inventory</a>
-                            </li>
-                        }
-                       
-                    <partial name="_LoginPartial" />
-                    </nav>
-                    <div id="menu-btn" class="fas fa-bars"></div>
-              
-            </section>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
 
-    <!-- footer -->
-    <section class="footer">
+			<div class="collapse navbar-collapse" id="navbarColor01">
+				<ul class="navbar-nav me-auto">
+					@* <li class="nav-item">
+					<a class="nav-link active" href="#">
+					Home
+					<span class="visually-hidden">(current)</span>
+					</a>
+					</li> *@
+					<partial name="_LoginPartial" />
+					<li class="nav-item">
+						<a class="nav-link" asp-action="Index" asp-controller="Home">Home</a>
+					</li>
+					@if (User.IsInRole("User"))
+					{
+						<li class="nav-item">
+							<a class="nav-link" asp-action="ProductsMenu" asp-controller="Products">Menu</a>
+						</li>
+					}
+					@*  <li class="nav-item">
+					<a class="nav-link" asp-action="Index" asp-controller="OrderItems">OrderItems</a>
+					</li> *@
+					@if (User.IsInRole("Admin"))
+					{
+						<li class="nav-item">
+							<a class="nav-link" asp-action="Index" asp-controller="Products">Products</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" asp-action="Index" asp-controller="Flavors">Flavors</a>
+						</li>
+					}
 
-        <div class="icons-container">
+					<a asp-area="" asp-action="Index" asp-controller="Home" class="logo">
+						<img src="https://chat.google.com/u/0/api/get_attachment_url?url_type=FIFE_URL&content_type=image%2Fpng&attachment_token=AOo0EEXQJZSDgy6dKy8ITHFSCCiNLoV%2BHcpx7J6e8skWn%2BzOhmsF8QgWYG2BLfDsh%2F%2F%2Fu%2BKmUj70sDXFjG9jCx%2FlDT6ajg6qdkJ1wH2ig9z7%2BD58lpsiZlrcU4%2FvTkGMv6Bw84moByFn9QiArCYhlhqTY1odwdYPyxP8e4Lc4QsD%2B1XK3g8iuhzwWGdDAM%2BLvO69ui5yGtVrsUTggcic8njgXUi4q92Jnj%2FenWvo6pvsezQnDV8iL6w%2FVv3F7cB09G6JVYxDk2pmajEM9W8wHqUNRe3w9VYGN9HkC0TYo3gJvJMVG8hhVh93%2F67aO5nD%2BbESTXHaNfVC3fiXCiFs1s3Ard6PP0nX7SmxwXdPyV6uidg6RsS3%2BBK9OkDFjPx1y3WbfpCj%2Fdam%2F%2Btc0PY6dy1B3MWlvMbTwc5aQEQnxt%2BYRMP%2F1D69mCA136i8cQlZhtfkNSJpd7uKHl%2BTp4qBfxU9XPAHg7i%2F%2BbKWLBGA0T9AB0k6K5uzVB%2BWIPRORrlfXG141b2m75PQAHYE0n9LzkWvERqUCnXkukDOFLm9QVfWIdTwtiu6BqsoYU%2FJlKwc9XSFm5XsxKQVBmitorYA%2FZvEUYKYJyOrRodvFA%3D%3D&sz=w512" alt="Ice cream logo" height="50px" />
+					</a>
+					@*      <li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+					<div class="dropdown-menu">
+					<a class="dropdown-item" href="#">Action</a>
+					<a class="dropdown-item" href="#">Another action</a>
+					<a class="dropdown-item" href="#">Something else here</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" href="#">Separated link</a>
+					</div>
+					</li> *@
+				</ul>
+				@* <form class="d-flex">
+				<input class="form-control me-sm-2" type="search" placeholder="Search">
+				<button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+				</form> *@
+			</div>
+		</div>
+	</nav>
+	<header>
+		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+			<div class="container-fluid">
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+						aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<section class="header">
 
-            <div class="icons">
-                <i class="fas fa-map"></i>
-                <h3>address</h3>
-                <p>
-                    230 Point of the Pines Dr <br>
-                    Colorado Springs <br>
-                    United States
-                </p>
-            </div>
+					@* <a asp-area="" asp-action="Index" asp-controller="Home" class="logo"> <i class="fas fa-ice-cream"></i> Ice cream </a> *@
 
-            <div class="icons">
-                <i class="fas fa-phone"></i>
-                <h3>phone</h3>
-                <p>+125-847-578</p>
-                <p>+125-847-578</p>
-            </div>
+					<nav class="navbar">
 
-            <div class="icons">
-                <i class="fas fa-envelope"></i>
-                <h3>email</h3>
-                <a href="#" class="link">ninjashub@gmail.com</a>
-            </div>
+						@*  <a asp-area="" asp-action="Index" asp-controller="Home">Home</a>
+						<a asp-area="" asp-action="About" asp-controller="Home">About</a>
+						<a asp-area="" asp-action="ProductsMenu" asp-controller="Products">Menu</a>
+						<a asp-area="" asp-action="Index" asp-controller="Flavors">Flavors</a>
+						<a asp-area="" asp-action="Index" asp-controller="OrderItems">OrderItems</a>
+						<a asp-area="" asp-action="Index" asp-controller="Products">Products</a>
+						*@      @* <a href="#about">about</a>
+						<a href="#menu">menu</a>
+						<a href="#gallery">gallery</a>
+						<a href="#reviews">reviews</a>
+						<a href="#order">order</a>
 
-            <div class="icons">
-                <i class="fas fa-clock"></i>
-                <h3>opening hours</h3>
-                <p>monday - friday: 2:00 - 12:00 <br> Saturday: 2:00 - 11:00</p>
-            </div>
+						@*  //קשור לאוטנטיקציה-אפרת לא לגעת!! login! do not change! *@
+						@* @if (User.Identity.IsAuthenticated)
+						{
+						<li class="nav-item">
+						<a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="GetAll">Products</a>
+						</li>
+						} *@
 
-        </div>
+						@* @if (User.IsInRole("Admin"))
+						{
+						<li class="nav-item">
+						<a class="nav-link text-dark" asp-area="" asp-controller="Inventory" asp-action="GetAll">Inventory</a>
+						</li>
+						} *@
 
-        <div class="share">
-            <a href="#" class="fab fa-facebook-f"></a>
-            <a href="#" class="fab fa-twitter"></a>
-            <a href="#" class="fab fa-instagram"></a>
-            <a href="#" class="fab fa-linkedin"></a>
-        </div>
 
-        <div class="credit">created by <span>ninjashub</span> | all right reserved!</div>
+					</nav>
+					<div id="menu-btn" class="fas fa-bars"></div>
 
-    </section>
-    <!-- footer -->
+				</section>
+			</div>
+		</nav>
+	</header>
+	<div class="container">
+		<main role="main" class="pb-3">
+			@RenderBody()
+		</main>
+	</div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+	<!-- footer -->
+	@*  <section class="footer">
+
+	<div class="icons-container">
+
+	<div class="icons">
+	<i class="fas fa-map"></i>
+	<h3>address</h3>
+	<p>
+	230 Point of the Pines Dr <br>
+	Colorado Springs <br>
+	United States
+	</p>
+	</div>
+
+	<div class="icons">
+	<i class="fas fa-phone"></i>
+	<h3>phone</h3>
+	<p>+125-847-578</p>
+	<p>+125-847-578</p>
+	</div>
+
+	<div class="icons">
+	<i class="fas fa-envelope"></i>
+	<h3>email</h3>
+	<a href="#" class="link">ninjashub@gmail.com</a>
+	</div>
+
+	<div class="icons">
+	<i class="fas fa-clock"></i>
+	<h3>opening hours</h3>
+	<p>monday - friday: 2:00 - 12:00 <br> Saturday: 2:00 - 11:00</p>
+	</div>
+
+	</div>
+
+	<div class="share">
+	<a href="#" class="fab fa-facebook-f"></a>
+	<a href="#" class="fab fa-twitter"></a>
+	<a href="#" class="fab fa-instagram"></a>
+	<a href="#" class="fab fa-linkedin"></a>
+	</div>
+
+	<div class="credit">created by <span>ninjashub</span> | all right reserved!</div>
+
+	</section> *@
+	<!-- footer -->
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

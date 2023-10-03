@@ -36,11 +36,11 @@
                 <select asp-for="Category" asp-items="categories" class="form-control"></select>
                 <span asp-validation-for="Category" class="text-danger"></span>
             </div>
-         @*    <div class="form-group">
-                <label asp-for="Url" class="control-label"></label>
-                <input asp-for="Url" class="form-control" />
-                <span asp-validation-for="Url" class="text-danger"></span>
-            </div> *@
+            <div class="form-group">
+                <label asp-for="MaxFlavorsNumber" class="control-label">Max Flavors Number</label>
+                <input asp-for="MaxFlavorsNumber" class="form-control" />
+                <span asp-validation-for="MaxFlavorsNumber" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="Url" class="control-label"></label>
                 <input asp-for="Url" class="form-control" />

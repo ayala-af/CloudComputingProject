@@ -7,18 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CloudComputingProject.Data;
 using CloudComputingProject.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CloudComputingProject.Controllers
 {
     /// <summary>
     /// this controller managing Crud actions for product model
     /// </summary>
+    /// 
+
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
         private readonly IWebHostEnvironment _env;
-      
+
         public ProductsController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
@@ -27,20 +30,20 @@ namespace CloudComputingProject.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-              return _context.Products != null ? 
-                          View(await _context.Products.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Products'  is null.");
+            return _context.Products != null ?
+                        View(await _context.Products.ToListAsync()) :
+                        Problem("Entity set 'ApplicationDbContext.Products'  is null.");
         }
         public async Task<IActionResult> ProductsMenu()
         {
-              return _context.Products != null ? 
-                          View(await _context.Products.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Products'  is null.");
+            return _context.Products != null ?
+                        View(await _context.Products.ToListAsync()) :
+                        Problem("Entity set 'ApplicationDbContext.Products'  is null.");
         }
 
-        
-		// GET: Products/Details/5
-		public async Task<IActionResult> Details(int? id)
+
+        // GET: Products/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Products == null)
             {
@@ -69,7 +72,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Category,Url,Price,IsAvailable")] Product product, IFormFile imageFile)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Category,Url,Price,MaxFlavorsNumber,IsAvailable")] Product product, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
@@ -100,10 +103,10 @@ namespace CloudComputingProject.Controllers
             }
             return View(product);
         }
-		
 
-		// GET: Products/Edit/5
-		public async Task<IActionResult> Edit(int? id)
+
+        // GET: Products/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Products == null)
             {
@@ -123,7 +126,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Category,Url,Price,IsAvailable")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Category,Url,Price,MaxFlavorsNumber,IsAvailable")] Product product)
         {
             if (id != product.Id)
             {
@@ -185,14 +188,14 @@ namespace CloudComputingProject.Controllers
             {
                 _context.Products.Remove(product);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(int id)
         {
-          return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
