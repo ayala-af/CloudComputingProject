@@ -17,7 +17,7 @@ namespace CloudComputingProject.Controllers
     /// </summary>
     /// 
 
-    [Authorize(Roles = "Admin")]
+   // [Authorize(Roles = "Admin")]
     public class FlavorsController : Controller
     {
         private readonly ApplicationDbContext _context;

@@ -21,18 +21,11 @@ namespace CloudComputingProject.Controllers
     public class OrderItemsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        // private readonly ICartRepository _cartRepo;
-        //  private readonly UserManager<IdentityUser> _userManager;
-        //  private readonly IHttpContextAccessor _httpContextAccessor;
-        //private ShoppingCart _shoppingCart;
+     
         public OrderItemsController(ApplicationDbContext context /*,ICartRepository cartRepo*//*IHttpContextAccessor httpContextAccessor,UserManager<IdentityUser> userManager*/)
         {
             _context = context;
-            //   _cartRepo = cartRepo;
-            //_shoppingCart = new ShoppingCart
-            //{
-            //    CartDetails = new List<OrderItem> { }
-            //};
+           
         }
 
 

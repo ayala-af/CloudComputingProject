@@ -5,22 +5,27 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Previous Orders</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ClientName)
+                @Html.DisplayNameFor(model => model.ClientFirstName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                @Html.DisplayNameFor(model => model.ClientLastName)
+            </th>
+          
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.OrderDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.City)
@@ -31,6 +36,24 @@
             <th>
                 @Html.DisplayNameFor(model => model.House)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FeelsLike)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Humidity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Temperature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsHoliday)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderDay)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalPrice)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -38,13 +61,20 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ClientName)
+                @Html.DisplayFor(modelItem => item.ClientFirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
+                @Html.DisplayFor(modelItem => item.ClientLastName)
+            </td>
+           
+            <td>
+                @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.OrderDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.City)
@@ -56,10 +86,24 @@
                 @Html.DisplayFor(modelItem => item.House)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @Html.DisplayFor(modelItem => item.FeelsLike)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Humidity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Temperature)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsHoliday)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDay)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalPrice)
+            </td>
+           
         </tr>
 }
     </tbody>

@@ -3,76 +3,100 @@
 @using CloudComputingProject.Data;
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Shopping Cart";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var products = await ViewContext.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>().Products.ToListAsync();
     var flavors = await ViewContext.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>().Flavors.ToListAsync();
-
 }
 
-<h1>Shopping Cart</h1>
-
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Flavors)
-            </th>
-           @*  <th>
-                @Html.DisplayNameFor(model => model.OrderId)
-            </th> *@
-            <th>
-                Product Image
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProductId)
-                </td>
-                <td>
+<div class="container mt-4">
+    <h1>Your Shopping Cart</h1>
+    @if (Model.Any())
+    {
+        <div class="cart-container">
+            @foreach (var item in Model)
+            {
+                <div class="cart-item">
                     @if (item.ProductId > 0)
                     {
                         var product = products.FirstOrDefault(p => p.Id == item.ProductId);
                         if (product != null)
                         {
-                            <img src="@product.Url" alt="@product.Name" class="img-thumbnail" height="100px" />
+                            <h5>@product.Name</h5>
+                            <img src="@product.Url" alt="@product.Name" class="img-thumbnail" />
                         }
                     }
-                </td>
-                <td>
-                    @foreach (var flavor in item.Flavors.Split(',')) // Split the flavors string
-                    {
-                        @if (item.Flavors.Count() > 0)
+                    <div class="flavors">
+                        @if (!string.IsNullOrEmpty(item.Flavors))
                         {
-                            var flavors2 = flavors.Where(p => p.Id.ToString() == flavor);
-                            foreach(var f in flavors2)
+                            foreach (var flavor in item.Flavors.Split(','))
                             {
-                                <img src="@f.FlavorUrl" alt="@f.FlavorName " class="img-thumbnail" height="70px" width="70px" />
+                                if (!string.IsNullOrEmpty(flavor))
+                                {
+                                    var flavorId = int.Parse(flavor);
+                                    var f = flavors.FirstOrDefault(p => p.Id == flavorId);
+                                    if (f != null)
+                                    {
+                                        <img src="@f.FlavorUrl" alt="@f.FlavorName" class="flavor-image" />
+                                    }
+                                }
                             }
                         }
-                    }
-                </td>
-                @* <td>
-                    @Html.DisplayFor(modelItem => item.OrderId)
-                </td> *@
-              
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                    </div>
+                    <div class="actions">
+                        <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm">Details</a>
+                        <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">Remove</a>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="checkout-button">
+            <a href="@Url.Action("Create","Orders")" class="btn btn-success">Checkout</a>
+        </div>
+    }
+    else
+    {
+        <p>Your shopping cart is empty.</p>
+    }
+</div>
 
+<style>
+    .cart-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
 
+    .cart-item {
+        border: 2px solid #007bff; /* More significant border */
+        padding: 20px;
+        width: 300px;
+    }
+
+    .img-thumbnail {
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .flavors {
+        margin-top: 10px;
+    }
+
+    .flavor-image {
+        max-width: 50px;
+        height: auto;
+        margin-right: 5px;
+    }
+
+    .actions {
+        margin-top: 10px;
+    }
+
+    .checkout-button {
+        text-align: right;
+        margin-top: 20px;
+    }
+</style>

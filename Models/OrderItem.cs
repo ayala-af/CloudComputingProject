@@ -24,7 +24,7 @@ namespace CloudComputingProject.Models
        //One order has many OrderItems
        public int OrderId { get; set; }
         public string UserId { get; set; } = "000";
-
+        public double Price { get; set; }
     }
     /*
     ***Due to many problems working with a list type property with the

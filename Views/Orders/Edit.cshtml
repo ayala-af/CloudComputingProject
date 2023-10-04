@@ -15,19 +15,30 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="ClientName" class="control-label"></label>
-                <input asp-for="ClientName" class="form-control" />
-                <span asp-validation-for="ClientName" class="text-danger"></span>
+                <label asp-for="ClientFirstName" class="control-label"></label>
+                <input asp-for="ClientFirstName" class="form-control" />
+                <span asp-validation-for="ClientFirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
+                <label asp-for="ClientLastName" class="control-label"></label>
+                <input asp-for="ClientLastName" class="form-control" />
+                <span asp-validation-for="ClientLastName" class="text-danger"></span>
+            </div>
+           
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="OrderDate" class="control-label"></label>
                 <input asp-for="OrderDate" class="form-control" />
                 <span asp-validation-for="OrderDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="City" class="control-label"></label>
@@ -43,6 +54,36 @@
                 <label asp-for="House" class="control-label"></label>
                 <input asp-for="House" class="form-control" />
                 <span asp-validation-for="House" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FeelsLike" class="control-label"></label>
+                <input asp-for="FeelsLike" class="form-control" />
+                <span asp-validation-for="FeelsLike" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Humidity" class="control-label"></label>
+                <input asp-for="Humidity" class="form-control" />
+                <span asp-validation-for="Humidity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Temperature" class="control-label"></label>
+                <input asp-for="Temperature" class="form-control" />
+                <span asp-validation-for="Temperature" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsHoliday" /> @Html.DisplayNameFor(model => model.IsHoliday)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="OrderDay" class="control-label"></label>
+                <select asp-for="OrderDay" class="form-control"></select>
+                <span asp-validation-for="OrderDay" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TotalPrice" class="control-label"></label>
+                <input asp-for="TotalPrice" class="form-control" />
+                <span asp-validation-for="TotalPrice" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
