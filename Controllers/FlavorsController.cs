@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using CloudComputingProject.Data;
 using CloudComputingProject.Models;
 using Microsoft.AspNetCore.Authorization;
+using Firebase.Auth;
+using Firebase.Storage;
 
 namespace CloudComputingProject.Controllers
 {
@@ -22,9 +24,15 @@ namespace CloudComputingProject.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public FlavorsController(ApplicationDbContext context)
+        private readonly IWebHostEnvironment _env;
+        private static string ApiKey = "\r\nAIzaSyC2RqgkdowSHpmrXDrDGnJcWplh_3d3xAE";
+        private static string Bucket = "cloudcomputingproject-81c00.appspot.com";
+        private static string AuthEmail = "ayalaaftergut@gmail.com";
+        private static string AuthPassword = "15251015";
+        public FlavorsController(ApplicationDbContext context,IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: Flavors
@@ -66,13 +74,51 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FlavorName,Category,IsAvailable,FlavorUrl")] Flavor flavor)
+        public async Task<IActionResult> Create([Bind("Id,FlavorName,Category,IsAvailable,FlavorUrl")] Flavor flavor, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(flavor);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // Check if an image file was uploaded
+                if ((imageFile != null && imageFile.Length > 0))
+                {
+                    var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                    var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                    FirebaseStorage firebaseStorage = new FirebaseStorage(
+                    Bucket,
+                    new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                        ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
+                    });
+
+
+                    // Define the path where you want to store the file in Firebase Storage
+                    string storagePath = "images/" + imageFile.FileName;
+
+                    // Upload the file to Firebase Storage
+                    try
+                    {
+                        using (var stream = imageFile.OpenReadStream())
+                        {
+                            var task = await firebaseStorage
+                                .Child(storagePath)
+                                .PutAsync(stream);
+
+
+                            flavor.FlavorUrl = task;
+                            // downloadUrl כאן יכיל את ה-URL לתמונה שהועלתה
+                        }
+                        _context.Add(flavor);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                    catch (Exception ex)
+                    {
+                        // טיפול בשגיאה במידה וההעלאה נכשלה
+                        Console.WriteLine("Exception was thrown: {0}", ex);
+                    }
+                }
             }
             return View(flavor);
         }
@@ -98,7 +144,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FlavorName,Category,IsAvailable,FlavorUrl")] Flavor flavor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FlavorName,Category,IsAvailable,FlavorUrl")] Flavor flavor, IFormFile? imageFile)
         {
             if (id != flavor.Id)
             {
@@ -109,8 +155,38 @@ namespace CloudComputingProject.Controllers
             {
                 try
                 {
-                    _context.Update(flavor);
+                    string flavortUrl;
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                        var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                        FirebaseStorage firebaseStorage = new FirebaseStorage(
+                            Bucket,
+                            new FirebaseStorageOptions
+                            {
+                                AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                                ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
+                            });
+
+                        // Define the path where you want to store the file in Firebase Storage
+                        string storagePath = "images/" + imageFile.FileName;
+
+                        // Upload the new image to Firebase Storage
+                        using (var stream = imageFile.OpenReadStream())
+                        {
+                            var task = await firebaseStorage
+                                .Child(storagePath)
+                                .PutAsync(stream);
+
+                            flavortUrl = task;
+                            // Update the URL property of the product with the new image URL
+                        }
+                        flavor.FlavorUrl = flavortUrl;
+                    }
+                        _context.Update(flavor);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)
                 {

@@ -78,7 +78,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Category,Url,Price,IsAvailable")] Product product, IFormFile imageFile)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Category,Url,Price,MaxFlavorsNumber,IsAvailable")] Product product, IFormFile imageFile)
         {
             
             if (ModelState.IsValid)
@@ -114,6 +114,13 @@ namespace CloudComputingProject.Controllers
                             product.Url = task;
                             // downloadUrl כאן יכיל את ה-URL לתמונה שהועלתה
                         }
+                        // Update the Product1 entity's ImageUrl property with the URL of the saved image
+
+                        // Save the product to the database, including the ImageUrl
+                        // ...
+                        _context.Add(product);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction("Index");
                     }
                     catch (Exception ex)
                     {
@@ -123,12 +130,7 @@ namespace CloudComputingProject.Controllers
 
 
 
-                    // Update the Product1 entity's ImageUrl property with the URL of the saved image
-
-                    // Save the product to the database, including the ImageUrl
-                    // ...
-                    _context.Add(product);
-                    await _context.SaveChangesAsync();
+                    
 
                 }
             }
@@ -159,7 +161,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Category,Url,Price,MaxFlavorsNumber,IsAvailable")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Category,Url,Price,MaxFlavorsNumber,IsAvailable")] Product product,IFormFile? imageFile)
         {
             if (id != product.Id)
             {
@@ -170,8 +172,47 @@ namespace CloudComputingProject.Controllers
             {
                 try
                 {
+                    string productUrl;
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                        var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                        FirebaseStorage firebaseStorage = new FirebaseStorage(
+                            Bucket,
+                            new FirebaseStorageOptions
+                            {
+                                AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                                ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
+                            });
+
+                        // Define the path where you want to store the file in Firebase Storage
+                        string storagePath = "images/" + imageFile.FileName;
+
+                        // Upload the new image to Firebase Storage
+                        using (var stream = imageFile.OpenReadStream())
+                        {
+                            var task = await firebaseStorage
+                                .Child(storagePath)
+                                .PutAsync(stream);
+
+                             productUrl = task;
+                            // Update the URL property of the product with the new image URL
+                        }
+
+                        //// Delete the old image from Firebase Storage (if needed)
+                        //if (!string.IsNullOrEmpty(product.Url))
+                        //{
+                        //    await firebaseStorage
+                        //        .Child(product.Url)
+                        //        .DeleteAsync();
+                        //}
+                        product.Url = productUrl;
+                    }
+                   
                     _context.Update(product);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -184,8 +225,9 @@ namespace CloudComputingProject.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+              
             }
+       
             return View(product);
         }
 
