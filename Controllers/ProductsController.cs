@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using CloudComputingProject.Data;
 using CloudComputingProject.Models;
 using Microsoft.AspNetCore.Authorization;
+using Firebase.Auth;
+using Firebase.Storage;
 
 namespace CloudComputingProject.Controllers
 {
@@ -21,6 +23,10 @@ namespace CloudComputingProject.Controllers
         private readonly ApplicationDbContext _context;
 
         private readonly IWebHostEnvironment _env;
+        private static string ApiKey = "\r\nAIzaSyC2RqgkdowSHpmrXDrDGnJcWplh_3d3xAE";
+        private static string Bucket = "cloudcomputingproject-81c00.appspot.com";
+        private static string AuthEmail = "ayalaaftergut@gmail.com";
+        private static string AuthPassword = "15251015";
 
         public ProductsController(ApplicationDbContext context, IWebHostEnvironment env)
         {
@@ -72,36 +78,63 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Category,Url,Price,MaxFlavorsNumber,IsAvailable")] Product product, IFormFile imageFile)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Category,Url,Price,IsAvailable")] Product product, IFormFile imageFile)
         {
+            
             if (ModelState.IsValid)
             {
                 // Check if an image file was uploaded
                 if ((imageFile != null && imageFile.Length > 0))
                 {
-                    // Save the image to the wwwroot/Uploads directory
-                    var uploadsFolder = Path.Combine(_env.WebRootPath, "Uploads");
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
-                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                    var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                    FirebaseStorage firebaseStorage = new FirebaseStorage(
+                    Bucket,
+                    new FirebaseStorageOptions
                     {
-                        await imageFile.CopyToAsync(stream);
+                        AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                        ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
+                    });
+
+
+                    // Define the path where you want to store the file in Firebase Storage
+                    string storagePath = "images/" + imageFile.FileName;
+
+                    // Upload the file to Firebase Storage
+                    try
+                    {
+                        using (var stream = imageFile.OpenReadStream())
+                        {
+                            var task = await firebaseStorage
+                                .Child(storagePath)
+                                .PutAsync(stream);
+
+
+                            product.Url = task;
+                            // downloadUrl כאן יכיל את ה-URL לתמונה שהועלתה
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // טיפול בשגיאה במידה וההעלאה נכשלה
+                        Console.WriteLine("Exception was thrown: {0}", ex);
                     }
 
+
+
                     // Update the Product1 entity's ImageUrl property with the URL of the saved image
-                    product.Url = "/Uploads/" + uniqueFileName;
+
                     // Save the product to the database, including the ImageUrl
                     // ...
                     _context.Add(product);
                     await _context.SaveChangesAsync();
 
-                    // Redirect to the index page or another appropriate action
                 }
-                return RedirectToAction("Index");
-
-
             }
+            // Redirect to the index page or another appropriate action
             return View(product);
+
         }
 
 
