@@ -23,16 +23,29 @@
             <div class="form-group">
                 <label asp-for="Flavors" class="control-label">Select Flavors (Hold Ctrl/Cmd to select multiple)</label>
                 <div id="flavor-selection">
-                    @foreach (var flavor in ViewBag.Flavors)
-                    {
-                        <div class="checkbox">
-                            <input type="checkbox" class="flavor-checkbox" name="flavors" data-max-flavors="@ViewBag.product.MaxFlavorsNumber" value="@flavor.Id" />
-                            <label for="SelectedFlavors">@flavor.FlavorName</label>
-                            <img src="@flavor.FlavorUrl" alt="@flavor.FlavorName" height="70px" width="70px" />
-                        </div>
-                    }
+                    <table>
+                        <tr>
+                            @foreach (var flavor in ViewBag.Flavors)
+                            {
+                                <td style="padding: 10px;">
+                                    <div class="checkbox">
+                                        <input type="checkbox" class="flavor-checkbox" name="flavors" data-max-flavors="@ViewBag.product.MaxFlavorsNumber" value="@flavor.Id" />
+                                        <label for="SelectedFlavors">@flavor.FlavorName</label>
+                                        <br />
+                                        <img src="@flavor.FlavorUrl" alt="@flavor.FlavorName" class="round-image" height="70px" width="70px" />
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    </table>
                 </div>
-                <span asp-validation-for="Flavors" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Price" class="control-label">Price</label>
+                <span style="font-size: 20px;">$@ViewBag.Product.Price.ToString("0.00")</span>
+                <input type="hidden" asp-for="Price" />
+                <span asp-validation-for="Price" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -41,6 +54,13 @@
         </form>
     </div>
 </div>
+<style>
+    .round-image {
+        border-radius: 50%;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+        margin: 20px; /* Add margin around the images as needed */
+    }
+</style>
 
 <div>
     <a asp-controller="Products" asp-action="ProductsMenu">Back to List</a>

@@ -61,9 +61,12 @@ namespace CloudComputingProject.Controllers
             //order.UserId = userId;
             //order.OrderDay = DateTime.UtcNow.DayOfWeek;
             //order.Items = orderItems;
+            
+              var items  = await _context.OrderItems.Where(item => item.UserId == userId && item.OrderId == 0).ToListAsync();
+            ViewBag.OrderItems = items;
             ViewBag.products = await _context.Products.ToListAsync();
             ViewBag.Flavors = await _context.Flavors.ToListAsync();
-
+            TempData["Price"] = items.Sum(item => item.Price);
             return View();
         }
 
@@ -94,7 +97,11 @@ namespace CloudComputingProject.Controllers
                     _context.Remove(item);
             }
                 await _context.SaveChangesAsync();
-         
+         foreach(OrderItem item in order.Items)
+            {
+                item.OrderId = order.Id;
+                _context.Update(item);
+            }
                 // Redirect to the index page
                 return RedirectToAction(nameof(Index));
             

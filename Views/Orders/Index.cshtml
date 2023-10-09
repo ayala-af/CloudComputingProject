@@ -103,7 +103,8 @@
             <td>
                 @Html.DisplayFor(modelItem => item.TotalPrice)
             </td>
-           
+                @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-primary" })
+
         </tr>
 }
     </tbody>

@@ -39,7 +39,7 @@ namespace CloudComputingProject.Controllers
         public async Task<IActionResult> Cart()
         {
             var filteredItems = await _context.OrderItems
-                  .Where(item => item.UserId == GetUserId())
+                  .Where(item => item.UserId == GetUserId()&&item.OrderId==0)
                   .ToListAsync();
 
 
@@ -80,7 +80,7 @@ namespace CloudComputingProject.Controllers
         /// <returns></returns>
 		[HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOrderItem(OrderItem orderItem, List<int> flavors)
+        public async Task<IActionResult> CreateOrderItem( OrderItem orderItem, List<int> flavors)
         {
 
             // Convert the list of selected flavors to a comma-separated string
@@ -90,7 +90,8 @@ namespace CloudComputingProject.Controllers
             orderItem.Flavors = flavorsString;
             // Get the current user's ID from the User.Identity
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-
+            var product = _context.Products.FirstOrDefault(p => p.Id == orderItem.ProductId);
+            orderItem.Price = product.Price;
             if (userIdClaim == null)
             {
                 // Handle the case where the user's ID claim is not found
