@@ -24,6 +24,7 @@
                         {
                             <h5>@product.Name</h5>
                             <img src="@product.Url" alt="@product.Name" class="img-thumbnail" />
+                            <p>Price: $@product.Price.ToString("0.00")</p> <!-- Display item price -->
                         }
                     }
                     <div class="flavors">
@@ -52,6 +53,7 @@
             }
         </div>
         <div class="checkout-button">
+            <h3>Total Price: $@Model.Sum(item => products.FirstOrDefault(p => p.Id == item.ProductId)?.Price ?? 0).ToString("0.00")</h3> <!-- Calculate and display total price -->
             <a href="@Url.Action("Create","Orders")" class="btn btn-success">Checkout</a>
         </div>
     }
@@ -60,6 +62,7 @@
         <p>Your shopping cart is empty.</p>
     }
 </div>
+
 
 <style>
     .cart-container {
