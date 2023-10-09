@@ -1,0 +1,87 @@
+﻿@model IEnumerable<CloudComputingProject.Models.OrderItem>
+
+<div class="cart-container">
+    @foreach (var item in Model)
+    {
+        <div class="cart-item">
+            <!-- Item details -->
+            @if (item.ProductId > 0)
+            {
+                var products = ViewData["Products"] as List<Product>;
+                if (products != null)
+                {
+                    var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                    if (product != null)
+                    {
+                        <h5>@product.Name</h5>
+                        <img src="@product.Url" alt="@product.Name" class="img-thumbnail" />
+                        <p>Price: $@product.Price.ToString("0.00")</p>
+                    }
+                }
+            }
+            <!-- Flavors -->
+            <div class="flavors">
+                @if (!string.IsNullOrEmpty(item.Flavors))
+                {
+                    foreach (var flavor in item.Flavors.Split(','))
+                    {
+                        if (!string.IsNullOrEmpty(flavor))
+                        {
+                            var flavorId = int.Parse(flavor);
+                            var flavors = ViewData["Flavors"] as List<Flavor>;
+                            if (flavors != null)
+                            {
+                                var f = flavors.FirstOrDefault(p => p.Id == flavorId);
+                                if (f != null)
+                                {
+                                    <img src="@f.FlavorUrl" alt="@f.FlavorName" class="flavor-image" />
+                                }
+                            }
+                        }
+                    }
+                }
+            </div>
+            <!-- Actions -->
+            <div class="actions">
+                <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm">Details</a>
+                <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-primary btn-sm">Edit</a>
+                <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">Remove</a>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .cart-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .cart-item {
+        border: 2px solid #007bff;
+        padding: 20px;
+        width: 300px;
+    }
+
+    .img-thumbnail {
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .flavors {
+        margin-top: 10px;
+    }
+
+    .flavor-image {
+        max-width: 50px;
+        height: auto;
+        margin-right: 5px;
+    }
+
+    .actions {
+        margin-top: 10px;
+    }
+</style>

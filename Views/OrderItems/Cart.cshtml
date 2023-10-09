@@ -5,101 +5,13 @@
 @{
     ViewData["Title"] = "Shopping Cart";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var products = await ViewContext.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>().Products.ToListAsync();
-    var flavors = await ViewContext.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>().Flavors.ToListAsync();
 }
 
 <div class="container mt-4">
     <h1>Your Shopping Cart</h1>
-    @if (Model.Any())
-    {
-        <div class="cart-container">
-            @foreach (var item in Model)
-            {
-                <div class="cart-item">
-                    @if (item.ProductId > 0)
-                    {
-                        var product = products.FirstOrDefault(p => p.Id == item.ProductId);
-                        if (product != null)
-                        {
-                            <h5>@product.Name</h5>
-                            <img src="@product.Url" alt="@product.Name" class="img-thumbnail" />
-                            <p>Price: $@product.Price.ToString("0.00")</p> <!-- Display item price -->
-                        }
-                    }
-                    <div class="flavors">
-                        @if (!string.IsNullOrEmpty(item.Flavors))
-                        {
-                            foreach (var flavor in item.Flavors.Split(','))
-                            {
-                                if (!string.IsNullOrEmpty(flavor))
-                                {
-                                    var flavorId = int.Parse(flavor);
-                                    var f = flavors.FirstOrDefault(p => p.Id == flavorId);
-                                    if (f != null)
-                                    {
-                                        <img src="@f.FlavorUrl" alt="@f.FlavorName" class="flavor-image" />
-                                    }
-                                }
-                            }
-                        }
-                    </div>
-                    <div class="actions">
-                        <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm">Details</a>
-                        <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-primary btn-sm">Edit</a>
-                        <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">Remove</a>
-                    </div>
-                </div>
-            }
-        </div>
-        <div class="checkout-button">
-            <h3>Total Price: $@Model.Sum(item => products.FirstOrDefault(p => p.Id == item.ProductId)?.Price ?? 0).ToString("0.00")</h3> <!-- Calculate and display total price -->
-            <a href="@Url.Action("Create","Orders")" class="btn btn-success">Checkout</a>
-        </div>
-    }
-    else
-    {
-        <p>Your shopping cart is empty.</p>
-    }
+    @Html.Partial("_ShoppingCartPartial", Model)
+    <div class="checkout-button">
+        <h3>Total Price: $@Model.Sum(item => (ViewData["Products"] as List<Product>)?.FirstOrDefault(p => p.Id == item.ProductId)?.Price ?? 0).ToString("0.00")</h3>
+        <a href="@Url.Action("Create","Orders")" class="btn btn-success">Checkout</a>
+    </div>
 </div>
-
-
-<style>
-    .cart-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-
-    .cart-item {
-        border: 2px solid #007bff; /* More significant border */
-        padding: 20px;
-        width: 300px;
-    }
-
-    .img-thumbnail {
-        max-width: 100%;
-        height: auto;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-    .flavors {
-        margin-top: 10px;
-    }
-
-    .flavor-image {
-        max-width: 50px;
-        height: auto;
-        margin-right: 5px;
-    }
-
-    .actions {
-        margin-top: 10px;
-    }
-
-    .checkout-button {
-        text-align: right;
-        margin-top: 20px;
-    }
-</style>

@@ -38,6 +38,11 @@ namespace CloudComputingProject.Controllers
         // GET: OrderItems
         public async Task<IActionResult> Cart()
         {
+            var products = await _context.Products.ToListAsync();
+            var flavors = await _context.Flavors.ToListAsync();
+
+            ViewData["Products"] = products;
+            ViewData["Flavors"] = flavors;
             var filteredItems = await _context.OrderItems
                   .Where(item => item.UserId == GetUserId()&&item.OrderId==0)
                   .ToListAsync();

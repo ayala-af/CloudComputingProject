@@ -1,6 +1,5 @@
 ﻿@model CloudComputingProject.Models.Order
 
-
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -9,6 +8,7 @@
 <div class="container mt-4">
     <h1>Checkout</h1>
     <div class="row">
+        <!-- Left column for form inputs -->
         <div class="col-md-6">
             <form asp-action="Create" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -47,68 +47,23 @@
                     <input asp-for="House" class="form-control" />
                     <span asp-validation-for="House" class="text-danger"></span>
                 </div>
-
                 <!-- Add form fields for other properties in the Order model -->
                 <div class="form-group">
+                    <h3>Total Price: $@TempData["Price"]</h3>
                     <input type="submit" value="Create" class="btn btn-primary" />
                 </div>
             </form>
         </div>
+        <!-- Right column for shopping cart items -->
         <div class="col-md-6">
-            <h3>Total Price: $@TempData["Price"]</h3>
+            @Html.Partial("_ShoppingCartPartial", ViewBag.OrderItems as IEnumerable<CloudComputingProject.Models.OrderItem>)
         </div>
     </div>
+    
 </div>
-
-
-   
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-<style>
-    .cart-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-
-    .cart-item {
-        border: 2px solid #007bff; /* More significant border */
-        padding: 20px;
-        width: 300px;
-    }
-
-    .img-thumbnail {
-        max-width: 100%;
-        height: auto;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-    .flavors {
-        margin-top: 10px;
-    }
-
-    .flavor-image {
-        max-width: 50px;
-        height: auto;
-        margin-right: 5px;
-    }
-
-    form {
-        padding: 20px;
-        border: 2px solid #007bff;
-        border-radius: 10px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .btn-success {
-        width: 100%;
-    }
-</style>
