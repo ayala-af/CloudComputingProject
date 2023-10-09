@@ -40,7 +40,7 @@ namespace CloudComputingProject.Controllers
         {
             var products = await _context.Products.ToListAsync();
             var flavors = await _context.Flavors.ToListAsync();
-
+         
             ViewData["Products"] = products;
             ViewData["Flavors"] = flavors;
             var filteredItems = await _context.OrderItems

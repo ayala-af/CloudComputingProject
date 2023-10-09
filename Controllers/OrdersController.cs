@@ -37,9 +37,14 @@ namespace CloudComputingProject.Controllers
             {
                 return NotFound();
             }
+            var products = await _context.Products.ToListAsync();
+            var flavors = await _context.Flavors.ToListAsync();
 
-            var order = await _context.Orders
-                .FirstOrDefaultAsync(m => m.Id == id);
+            ViewData["Products"] = products;
+            ViewData["Flavors"] = flavors;
+            var order = await _context.Orders.
+                FirstOrDefaultAsync(m => m.Id == id);
+            order.Items=_context.OrderItems.Where(i=>i.OrderId==id).ToList();
             if (order == null)
             {
                 return NotFound();
@@ -91,19 +96,21 @@ namespace CloudComputingProject.Controllers
 
                 // Add the order to the database
                 _context.Add(order);
-            foreach(var item in _context.OrderItems)
-            {
-                if(item.UserId == GetUserId())
-                    _context.Remove(item);
-            }
+            //foreach(var item in _context.OrderItems)
+            //{
+            //    if(item.UserId == GetUserId())
+            //        _context.Remove(item);
+            //}
                 await _context.SaveChangesAsync();
          foreach(OrderItem item in order.Items)
             {
                 item.OrderId = order.Id;
                 _context.Update(item);
             }
-                // Redirect to the index page
-                return RedirectToAction(nameof(Index));
+            await _context.SaveChangesAsync();
+
+            // Redirect to the index page
+            return RedirectToAction(nameof(Index));
             
 
             

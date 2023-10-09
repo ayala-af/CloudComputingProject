@@ -7,6 +7,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<!-- Set IsCartView in ViewData -->
+@{
+    ViewData["IsCartView"] = true;
+}
+
 <div class="container mt-4">
     <h1>Your Shopping Cart</h1>
     @Html.Partial("_ShoppingCartPartial", Model)
