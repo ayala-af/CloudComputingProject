@@ -7,34 +7,31 @@
 
 <h1>Menu</h1>
 
-
-
 <div class="row">
     @foreach (var item in Model)
     {
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card mb-4" style="margin: 10px;">
-                <img src="@item.Url" id="clickableImage" alt="Product Image" class="card-img-top" style="max-height: 400px;" />
+                <img src="@item.Url" id="clickableImage" alt="Product Image" class="card-img-top" style="max-height: 300px; " />
                 <div class="card-body">
-                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
-                    <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
+                    <h6 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h6>
+                    <p class="card-text small">@Html.DisplayFor(modelItem => item.Description)</p>
                     <p class="card-text"><strong>Price: $@Html.DisplayFor(modelItem => item.Price)</strong></p>
                     @if (item.IsAvailable)
                     {
-                        <p class="card-text text-success">Available</p>
+                        <p class="card-text text-success small">Available</p>
                     }
                     else
                     {
-                        <p class="card-text text-danger">Not Available</p>
+                        <p class="card-text text-danger small">Not Available</p>
                     }
 
-                    <a href="@Url.Action("CreateOrderItem", "OrderItems", new { productId = item.Id })" class="btn btn-primary">Add To Order</a>
-
+                    <a href="@Url.Action("CreateOrderItem", "OrderItems", new { productId = item.Id })" class="btn btn-sm btn-primary">Add To Order</a>
                 </div>
             </div>
         </div>
     }
 
     <!-- Add an empty product card as the last item -->
-    
+
 </div>

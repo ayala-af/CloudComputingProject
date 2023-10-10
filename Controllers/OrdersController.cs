@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CloudComputingProject.Data;
 using CloudComputingProject.Models;
 using System.Security.Claims;
+using Firebase.Auth;
 
 namespace CloudComputingProject.Controllers
 {
@@ -57,9 +58,8 @@ namespace CloudComputingProject.Controllers
         public async Task<IActionResult> Create()
         {
             string userId = GetUserId();
-            var orderItems = await _context.OrderItems
-                              .Where(item => item.UserId == GetUserId())
-                              .ToListAsync();
+            var items = await _context.OrderItems.Where(item => item.UserId == userId && item.OrderId == 0).ToListAsync();
+
             Order order = new Order();
             //order.TotalPrice = orderItems.Sum(p => p.Price);
             //order.OrderDate = DateTime.UtcNow;
@@ -67,7 +67,6 @@ namespace CloudComputingProject.Controllers
             //order.OrderDay = DateTime.UtcNow.DayOfWeek;
             //order.Items = orderItems;
             
-              var items  = await _context.OrderItems.Where(item => item.UserId == userId && item.OrderId == 0).ToListAsync();
             ViewBag.OrderItems = items;
             ViewBag.products = await _context.Products.ToListAsync();
             ViewBag.Flavors = await _context.Flavors.ToListAsync();
@@ -82,16 +81,16 @@ namespace CloudComputingProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ClientFirstName,ClientLastName,PhoneNumber,Email,City,Street,House")] Order order)
         {
-            
-                // Add the order items to the order
-                order.Items = await _context.OrderItems
-                                           .Where(item => item.UserId == GetUserId())
-                                           .ToListAsync();
+            order.UserId = GetUserId();
+            // Add the order items to the order
+            order.Items = await _context.OrderItems
+                                                     .Where(item => item.UserId == GetUserId()&&item.OrderId==0)
+                                                     .ToListAsync();
 
-                // Set the order properties
-                order.TotalPrice = order.Items.Sum(p => p.Price);
+            // Set the order properties
+            order.TotalPrice = order.Items.Sum(p => p.Price);
                 order.OrderDate = DateTime.UtcNow;
-                order.UserId = GetUserId();
+                
                 order.OrderDay = DateTime.UtcNow.DayOfWeek;
 
                 // Add the order to the database
@@ -110,10 +109,10 @@ namespace CloudComputingProject.Controllers
             await _context.SaveChangesAsync();
 
             // Redirect to the index page
-            return RedirectToAction(nameof(Index));
-            
+            return RedirectToAction(nameof(Details), new { Id = order.Id });
 
-            
+
+
         }
 
         // GET: Orders/Edit/5

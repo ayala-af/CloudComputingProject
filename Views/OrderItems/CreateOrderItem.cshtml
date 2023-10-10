@@ -71,13 +71,13 @@
         // JavaScript code to handle flavor selection
         $(document).ready(function () {
             $('.flavor-checkbox').on('change', function () {
-                var selectedFlavors = $('.flavor-checkbox:checked');
-                var maxFlavors = $(this).data('max-flavors');
+        var selectedFlavors = $('.flavor-checkbox:checked');
+        var maxFlavors = $(this).data('max-flavors');
 
-                if (selectedFlavors.length > maxFlavors) {
-                    $(this).prop('checked', false);
+        if (selectedFlavors.length > maxFlavors) {
+            $(this).prop('checked', false);
                     alert('You can select up to ' + maxFlavors + ' flavors.');
-                }
+        }
             });
         });
     </script>

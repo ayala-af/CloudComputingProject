@@ -47,7 +47,7 @@
                     <input asp-for="House" class="form-control" />
                     <span asp-validation-for="House" class="text-danger"></span>
                 </div>
-                <!-- Add form fields for other properties in the Order model -->
+                <!-- Add form fields for other properties in the Order model here -->
                 <div class="form-group">
                     <h3>Total Price: $@TempData["Price"]</h3>
                     <input type="submit" value="Create" class="btn btn-primary" />
@@ -59,11 +59,47 @@
             @Html.Partial("_ShoppingCartPartial", ViewBag.OrderItems as IEnumerable<CloudComputingProject.Models.OrderItem>)
         </div>
     </div>
-    
 </div>
 
+<!-- Modal -->
+<div id="confirmationModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Order Confirmation</h5>
+                <!-- Remove data-dismiss attribute from the close button -->
+                <button type="button" class="close">&times;</button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="rounded-circle border border-primary p-3 shadow-lg" style="background-color: white;">
+                    <img src="~/images/OlafCheckout.jpg" alt="Olaf Image" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover; object-position: center; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);" />
+                </div>
+                <p>Your Order Is Placed</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script>
+        $(function () {
+            $('form').submit(function () {
+                $('#confirmationModal').modal('show');
+                setTimeout(function () {
+                    if ($('form').hasClass('was-submitted')) {
+                        // The form has already been submitted, so don't close the modal
+                        return;
+                    }
+
+                    // The form has not been submitted yet, so close the modal
+                    $('#confirmationModal').modal('hide');
+                }, 39000); // 39000 milliseconds (39 seconds)
+            });
+        });
+    </script>
 }
+
+
+}
+

@@ -8370,7 +8370,7 @@ p {
 	text-align: center;
 }
 
-h1 {
+h1,label {
 	background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/209981/6963bbf342d87b3a2150bd8f59682b89.jpg);
 	-webkit-background-clip: text;
 	background-size: contain;
@@ -8422,7 +8422,7 @@ html, body {
 	height: 100%;
 }
 
-h1 {
+h1,.frozenText {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -80%);
