@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using CloudComputingProject.Data;
 using CloudComputingProject.Models;
 using System.Security.Claims;
+using Newtonsoft.Json.Linq;
+
 
 namespace CloudComputingProject.Controllers
 {
@@ -54,7 +56,7 @@ namespace CloudComputingProject.Controllers
         }
 
         // GET: Orders/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(decimal orderTotal)
         {
             string userId = GetUserId();
             var orderItems = await _context.OrderItems
@@ -80,12 +82,12 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ClientFirstName,ClientLastName,PhoneNumber,Email,City,Street,House")] Order order)
+        public async Task<IActionResult> Create([Bind("Id,ClientFirstName,ClientLastName,PhoneNumber,Email,City,Street,House,TotalPrice")] Order order)
         {
             
                 // Add the order items to the order
                 order.Items = await _context.OrderItems
-                                           .Where(item => item.UserId == GetUserId())
+                                           .Where(item => item.UserId == GetUserId()&& item.OrderId == 0)
                                            .ToListAsync();
 
                 // Set the order properties
@@ -111,10 +113,11 @@ namespace CloudComputingProject.Controllers
 
             // Redirect to the index page
             return RedirectToAction(nameof(Index));
-            
 
-            
+
+
         }
+    
 
         // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
