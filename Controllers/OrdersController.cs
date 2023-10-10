@@ -8,7 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using CloudComputingProject.Data;
 using CloudComputingProject.Models;
 using System.Security.Claims;
+using Newtonsoft.Json.Linq;
 using Firebase.Auth;
+
 
 namespace CloudComputingProject.Controllers
 {
@@ -55,7 +57,7 @@ namespace CloudComputingProject.Controllers
         }
 
         // GET: Orders/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(decimal orderTotal)
         {
             string userId = GetUserId();
             var items = await _context.OrderItems.Where(item => item.UserId == userId && item.OrderId == 0).ToListAsync();
@@ -79,7 +81,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ClientFirstName,ClientLastName,PhoneNumber,Email,City,Street,House")] Order order)
+        public async Task<IActionResult> Create([Bind("Id,ClientFirstName,ClientLastName,PhoneNumber,Email,City,Street,House,TotalPrice")] Order order)
         {
             order.UserId = GetUserId();
             // Add the order items to the order
@@ -114,6 +116,7 @@ namespace CloudComputingProject.Controllers
 
 
         }
+    
 
         // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)

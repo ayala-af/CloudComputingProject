@@ -49,11 +49,16 @@
                 </div>
                 <!-- Add form fields for other properties in the Order model here -->
                 <div class="form-group">
-                    <h3>Total Price: $@TempData["Price"]</h3>
+                    <h3 id="total-price">Total Price: $@TempData["Price"]</h3>
                     <input type="submit" value="Create" class="btn btn-primary" />
                 </div>
             </form>
         </div>
+        <script src="https://www.paypal.com/sdk/js?client-id=AdH-W3YFqF0r0e2ZdfpPB7AIabq4usrFvFHc3BmUxFv1QmuYvXkAL9pZjRAK_GgoujgB7Z5t_LwIxnMG&components=buttons"></script>
+        <div id="paypal-button-container" ></div>
+ 
+        
+        
         <!-- Right column for shopping cart items -->
         <div class="col-md-6">
             @Html.Partial("_ShoppingCartPartial", ViewBag.OrderItems as IEnumerable<CloudComputingProject.Models.OrderItem>)
