@@ -37,9 +37,14 @@ namespace CloudComputingProject.Controllers
             {
                 return NotFound();
             }
+            var products = await _context.Products.ToListAsync();
+            var flavors = await _context.Flavors.ToListAsync();
 
-            var order = await _context.Orders
-                .FirstOrDefaultAsync(m => m.Id == id);
+            ViewData["Products"] = products;
+            ViewData["Flavors"] = flavors;
+            var order = await _context.Orders.
+                FirstOrDefaultAsync(m => m.Id == id);
+            order.Items=_context.OrderItems.Where(i=>i.OrderId==id).ToList();
             if (order == null)
             {
                 return NotFound();
@@ -61,9 +66,12 @@ namespace CloudComputingProject.Controllers
             //order.UserId = userId;
             //order.OrderDay = DateTime.UtcNow.DayOfWeek;
             //order.Items = orderItems;
+            
+              var items  = await _context.OrderItems.Where(item => item.UserId == userId && item.OrderId == 0).ToListAsync();
+            ViewBag.OrderItems = items;
             ViewBag.products = await _context.Products.ToListAsync();
             ViewBag.Flavors = await _context.Flavors.ToListAsync();
-
+            TempData["Price"] = items.Sum(item => item.Price);
             return View();
         }
 
@@ -88,15 +96,21 @@ namespace CloudComputingProject.Controllers
 
                 // Add the order to the database
                 _context.Add(order);
-            foreach(var item in _context.OrderItems)
-            {
-                if(item.UserId == GetUserId())
-                    _context.Remove(item);
-            }
+            //foreach(var item in _context.OrderItems)
+            //{
+            //    if(item.UserId == GetUserId())
+            //        _context.Remove(item);
+            //}
                 await _context.SaveChangesAsync();
-         
-                // Redirect to the index page
-                return RedirectToAction(nameof(Index));
+         foreach(OrderItem item in order.Items)
+            {
+                item.OrderId = order.Id;
+                _context.Update(item);
+            }
+            await _context.SaveChangesAsync();
+
+            // Redirect to the index page
+            return RedirectToAction(nameof(Index));
             
 
             
