@@ -5,55 +5,134 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <h1>Checkout</h1>
+    <div class="row">
+        <!-- Left column for form inputs -->
+        <div class="col-md-6">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="ClientFirstName">First Name</label>
+                    <input asp-for="ClientFirstName" class="form-control" />
+                    <span asp-validation-for="ClientFirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ClientLastName">Last Name</label>
+                    <input asp-for="ClientLastName" class="form-control" />
+                    <span asp-validation-for="ClientLastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber">Phone Number</label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="City">City</label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Street">Street</label>
+                    <input asp-for="Street" class="form-control" />
+                    <span asp-validation-for="Street" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="House">House Number</label>
+                    <input asp-for="House" class="form-control" />
+                    <span asp-validation-for="House" class="text-danger"></span>
+                </div>
+                <!-- Add form fields for other properties in the Order model here -->
+                <div class="form-group">
+                    <h3 id="total-price">Total Price: $@TempData["Price"]</h3>
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+        <script src="https://www.paypal.com/sdk/js?client-id=AdH-W3YFqF0r0e2ZdfpPB7AIabq4usrFvFHc3BmUxFv1QmuYvXkAL9pZjRAK_GgoujgB7Z5t_LwIxnMG&components=buttons"></script>
+        <div id="paypal-button-container"></div>
 
-<h4>Order</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ClientName" class="control-label"></label>
-                <input asp-for="ClientName" class="form-control" />
-                <span asp-validation-for="ClientName" class="text-danger"></span>
+        <!-- Right column for shopping cart items -->
+        <div class="col-md-6">
+            @Html.Partial("_ShoppingCartPartial", ViewBag.OrderItems as IEnumerable<CloudComputingProject.Models.OrderItem>)
+        </div>
+    </div>
+    </div>
+
+<!-- Modal and Scripts... -->
+<!-- Modal -->
+<div id="confirmationModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Order Confirmation</h5>
+                <!-- Remove data-dismiss attribute from the close button -->
+                <button type="button" class="close">&times;</button>
             </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
+            <div class="modal-body text-center">
+                <div class="rounded-circle border border-primary p-3 shadow-lg" style="background-color: white;">
+                    <img src="~/images/OlafCheckout.jpg" alt="Olaf Image" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover; object-position: center; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);" />
+                </div>
+                <p>Your Order Is Placed</p>
             </div>
-            <div class="form-group">
-                <label asp-for="OrderDate" class="control-label"></label>
-                <input asp-for="OrderDate" class="form-control" />
-                <span asp-validation-for="OrderDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Street" class="control-label"></label>
-                <input asp-for="Street" class="form-control" />
-                <span asp-validation-for="Street" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="House" class="control-label"></label>
-                <input asp-for="House" class="form-control" />
-                <span asp-validation-for="House" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(function () {
+            $('form').submit(function () {
+                $('#confirmationModal').modal('show');
+                setTimeout(function () {
+                    if ($('form').hasClass('was-submitted')) {
+                        // The form has already been submitted, so don't close the modal
+                        return;
+                    }
+
+                    // The form has not been submitted yet, so close the modal
+                    $('#confirmationModal').modal('hide');
+                }, 39000); // 39000 milliseconds (39 seconds)
+            });
+        });
+    </script>
+
+    <script>
+    paypal.Buttons({
+        style: {
+            disableMaxWidth: true
+        },
+        createOrder: function (data, actions) {
+    
+            var totalPrice = @TempData["Price"];
+
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: totalPrice
+                    }
+                }]
+            });
+        },
+        onApprove: function (data, actions) {
+            // Capture the funds from the transaction
+            return actions.order.capture().then(function (details) {
+                // Call your server to save the transaction
+                return fetch('Orders', {
+                    method: 'post',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orderID: data.orderID
+                    })
+                });
+            });
+        }
+    }).render('#paypal-button-container');</script>
 }

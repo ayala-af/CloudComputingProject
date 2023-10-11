@@ -1,0 +1,102 @@
+﻿@model CloudComputingProject.Models.OrderItem
+
+@{
+    ViewData["Title"] = "CreateOrderItem";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+
+<div class="row">
+    <!-- Product Image and Name on the Left -->
+    <div class="col-md-3">
+        <div class="text-center">
+            <h4>@ViewBag.Product.Name</h4>
+            <img src="@ViewBag.Product.Url" alt="Product Image" class="product-image" style="box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); border-radius: 0; width: 300px; height: 300px; margin-left: 10px;" />
+        </div>
+    </div>
+
+    <!-- Flavor Selection on the Right -->
+    <div class="col-md-9">
+        <form asp-action="CreateOrderItem" method="post" id="orderItemForm">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group" style="display:none">
+                <label asp-for="ProductId" class="control-label">Product ID</label>
+                <span class="form-control" readonly>@Model.ProductId</span>
+                <input type="hidden" asp-for="ProductId" />
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Flavors" class="h4">Select up to @ViewBag.product.MaxFlavorsNumber Flavors</label>
+                <div id="flavor-selection" style="display: flex; flex-wrap: wrap;">
+                    @foreach (var flavor in ViewBag.Flavors)
+                    {
+                        <div style="padding: 5px;">
+                            <div class="text-center">
+                                <img src="@flavor.FlavorUrl" alt="@flavor.FlavorName" class="flavor-image" style="width: 60px; height: 60px;" />
+                            </div>
+                            <div class="checkbox text-center" style="margin-top: 10px;">
+                                <input type="checkbox" class="flavor-checkbox" name="flavors" data-max-flavors="@ViewBag.product.MaxFlavorsNumber" value="@flavor.Id" />
+                                <label for="SelectedFlavors">@flavor.FlavorName</label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Price" class="control-label">Price</label>
+                <span style="font-size: 20px;">$@ViewBag.Product.Price.ToString("0.00")</span>
+                <input type="hidden" asp-for="Price" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="button" value="Add To Cart" class="btn btn-primary" id="addToCartButton" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .product-image {
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 0;
+        width: 300px;
+        height: 300px;
+        margin-left: 10px;
+    }
+
+    .flavor-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script>
+    // Add JavaScript to hide the "Add to Cart" button if no flavor is selected
+    var addToCartButton = document.getElementById("addToCartButton");
+    addToCartButton.style.display = "none";
+
+    document.querySelectorAll(".flavor-checkbox").forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+            var selectedFlavors = document.querySelectorAll(".flavor-checkbox:checked");
+            if (selectedFlavors.length > 0) {
+                addToCartButton.style.display = "inline";
+            } else {
+                addToCartButton.style.display = "none";
+            }
+        });
+    });
+</script>
+
+
+
+
+
+

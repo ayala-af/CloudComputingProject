@@ -4,22 +4,24 @@
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var categories = Enum.GetValues(typeof(CloudComputingProject.Models.Categoty))
-                         .Cast<CloudComputingProject.Models.Categoty>()
+    var categories = Enum.GetValues(typeof(CloudComputingProject.Models.Category))
+                         .Cast<CloudComputingProject.Models.Category>()
                          .Select(c => new SelectListItem
                                  {
                                      Text = c.ToString(),
                                      Value = ((int)c).ToString()
                                  })
                          .ToList();
-}
+}<a href="c:\users\ayala\source\repos\cloudcomputingproject\views\products\create.cshtml">c:\users\ayala\source\repos\cloudcomputingproject\views\products\create.cshtml</a>
 <h1>Create</h1>
 
 <h4>Product</h4>
 <hr />
 <div class="row">
+
+
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -32,14 +34,22 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Categoty" class="control-label"></label>
-                <select asp-for="Categoty" asp-items="categories" class="form-control"></select>
-                <span asp-validation-for="Categoty" class="text-danger"></span>
+                <label asp-for="Category" class="control-label"></label>
+                <select asp-for="Category" asp-items="categories" class="form-control"></select>
+                <span asp-validation-for="Category" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Url" class="control-label"></label>
-                <input asp-for="Url" class="form-control" />
+                <label asp-for="MaxFlavorsNumber" class="control-label">Max Flavors Number</label>
+                <input asp-for="MaxFlavorsNumber" class="form-control" />
+                <span asp-validation-for="MaxFlavorsNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Url" class="control-label">Product Picture</label>
+                <input type="file" name="imageFile" class="form-control-file" id="imageInput" />
                 <span asp-validation-for="Url" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <img id="imagePreview" src="#" alt="Product Image" style="max-width: 100%; max-height: 300px;" />
             </div>
             <div class="form-group">
                 <label asp-for="Price" class="control-label"></label>
@@ -55,12 +65,32 @@
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+
     </div>
 </div>
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+<script>
+    function previewImage() {
+        var input = document.getElementById('imageInput');
+        var preview = document.getElementById('imagePreview');
+
+        input.addEventListener('change', function () {
+            var file = input.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+    previewImage(); // קריאה לפונקציה בטעינת הדף כדי לאפשר הצגת התמונה הברירת מחדל
+</script>
 
 @section Scripts {
     @{

@@ -24,9 +24,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Flavors)
             </th>
-            <th>
+           @*  <th>
                 @Html.DisplayNameFor(model => model.OrderId)
-            </th>
+            </th> *@
             <th>
                 Product Image
             </th>
@@ -41,6 +41,16 @@
                     @Html.DisplayFor(modelItem => item.ProductId)
                 </td>
                 <td>
+                    @if (item.ProductId > 0)
+                    {
+                        var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                        if (product != null)
+                        {
+                            <img src="@product.Url" alt="@product.Name" class="img-thumbnail" height="100px" />
+                        }
+                    }
+                </td>
+                <td>
                     @foreach (var flavor in item.Flavors.Split(',')) // Split the flavors string
                     {
                         @if (item.Flavors.Count() > 0)
@@ -48,24 +58,15 @@
                             var flavors2 = flavors.Where(p => p.Id.ToString() == flavor);
                             foreach(var f in flavors2)
                             {
-                                <img src="@f.FlavorUrl" alt="@f.FlavorName " class="img-thumbnail" />
+                                <img src="@f.FlavorUrl" alt="@f.FlavorName " class="img-thumbnail" height="70px" width="70px" />
                             }
                         }
                     }
                 </td>
-                <td>
+                @* <td>
                     @Html.DisplayFor(modelItem => item.OrderId)
-                </td>
-                <td>
-                    @if (item.ProductId > 0)
-                    {
-                        var product = products.FirstOrDefault(p=>p.Id==item.ProductId) ;
-                        if (product != null)
-                        {
-                            <img src="@product.Url" alt="@product.Name" class="img-thumbnail" />
-                        }
-                    }
-                </td>
+                </td> *@
+              
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

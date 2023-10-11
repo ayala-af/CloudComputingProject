@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CloudComputingProject.Data;
 using CloudComputingProject.Models;
+using System.Security.Claims;
+using Newtonsoft.Json.Linq;
+using Firebase.Auth;
+
 
 namespace CloudComputingProject.Controllers
 {
@@ -22,21 +26,28 @@ namespace CloudComputingProject.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-              return _context.Order != null ? 
-                          View(await _context.Order.ToListAsync()) :
+            string userId = GetUserId();
+
+            return _context.Orders != null ? 
+                          View(await _context.Orders.Where(o=>o.UserId==userId).ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Order'  is null.");
         }
 
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Order == null)
+            if (id == null || _context.Orders == null)
             {
                 return NotFound();
             }
+            var products = await _context.Products.ToListAsync();
+            var flavors = await _context.Flavors.ToListAsync();
 
-            var order = await _context.Order
-                .FirstOrDefaultAsync(m => m.Id == id);
+            ViewData["Products"] = products;
+            ViewData["Flavors"] = flavors;
+            var order = await _context.Orders.
+                FirstOrDefaultAsync(m => m.Id == id);
+            order.Items=_context.OrderItems.Where(i=>i.OrderId==id).ToList();
             if (order == null)
             {
                 return NotFound();
@@ -46,8 +57,22 @@ namespace CloudComputingProject.Controllers
         }
 
         // GET: Orders/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create(decimal orderTotal)
         {
+            string userId = GetUserId();
+            var items = await _context.OrderItems.Where(item => item.UserId == userId && item.OrderId == 0).ToListAsync();
+
+            Order order = new Order();
+            //order.TotalPrice = orderItems.Sum(p => p.Price);
+            //order.OrderDate = DateTime.UtcNow;
+            //order.UserId = userId;
+            //order.OrderDay = DateTime.UtcNow.DayOfWeek;
+            //order.Items = orderItems;
+            
+            ViewBag.OrderItems = items;
+            ViewBag.products = await _context.Products.ToListAsync();
+            ViewBag.Flavors = await _context.Flavors.ToListAsync();
+            TempData["Price"] = items.Sum(item => item.Price);
             return View();
         }
 
@@ -56,26 +81,52 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ClientName,Price,OrderDate,City,Street,House")] Order order)
+        public async Task<IActionResult> Create([Bind("Id,ClientFirstName,ClientLastName,PhoneNumber,Email,City,Street,House,TotalPrice")] Order order)
         {
-            if (ModelState.IsValid)
-            {
+            order.UserId = GetUserId();
+            // Add the order items to the order
+            order.Items = await _context.OrderItems
+                                                     .Where(item => item.UserId == GetUserId()&&item.OrderId==0)
+                                                     .ToListAsync();
+
+            // Set the order properties
+            order.TotalPrice = order.Items.Sum(p => p.Price);
+                order.OrderDate = DateTime.UtcNow;
+                
+                order.OrderDay = DateTime.UtcNow.DayOfWeek;
+
+                // Add the order to the database
                 _context.Add(order);
+            //foreach(var item in _context.OrderItems)
+            //{
+            //    if(item.UserId == GetUserId())
+            //        _context.Remove(item);
+            //}
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+         foreach(OrderItem item in order.Items)
+            {
+                item.OrderId = order.Id;
+                _context.Update(item);
             }
-            return View(order);
+            await _context.SaveChangesAsync();
+
+            // Redirect to the index page
+            return RedirectToAction(nameof(Details), new { Id = order.Id });
+
+
+
         }
+    
 
         // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Order == null)
+            if (id == null || _context.Orders == null)
             {
                 return NotFound();
             }
 
-            var order = await _context.Order.FindAsync(id);
+            var order = await _context.Orders.FindAsync(id);
             if (order == null)
             {
                 return NotFound();
@@ -88,7 +139,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ClientName,Price,OrderDate,City,Street,House")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ClientFirstName,ClientLastName,Price,PhoneNumber,OrderDate,Email,City,Street,House,FeelsLike,Humidity,Temperature,IsHoliday,OrderDay,TotalPrice")] Order order)
         {
             if (id != order.Id)
             {
@@ -121,12 +172,12 @@ namespace CloudComputingProject.Controllers
         // GET: Orders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Order == null)
+            if (id == null || _context.Orders == null)
             {
                 return NotFound();
             }
 
-            var order = await _context.Order
+            var order = await _context.Orders
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
@@ -141,14 +192,14 @@ namespace CloudComputingProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Order == null)
+            if (_context.Orders == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Order'  is null.");
             }
-            var order = await _context.Order.FindAsync(id);
+            var order = await _context.Orders.FindAsync(id);
             if (order != null)
             {
-                _context.Order.Remove(order);
+                _context.Orders.Remove(order);
             }
             
             await _context.SaveChangesAsync();
@@ -157,7 +208,19 @@ namespace CloudComputingProject.Controllers
 
         private bool OrderExists(int id)
         {
-          return (_context.Order?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Orders?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-    }
+		private string GetUserId()
+		{
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+			if (userIdClaim == null)
+			{
+				// Handle the case where the user's ID claim is not found
+				return "000"; // Redirect to the login page or handle as needed
+			}
+
+			return userIdClaim.Value;
+		}
+	}
 }

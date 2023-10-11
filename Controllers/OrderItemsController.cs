@@ -5,44 +5,124 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authorization;
+using CloudComputingProject.Services;
 using CloudComputingProject.Data;
 using CloudComputingProject.Models;
-using CloudComputingProject.Services;
+
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace CloudComputingProject.Controllers
 {
+
     public class OrderItemsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private string GetProductImageUrl(int productId)
-        {
-            var product = _context.Products.FirstOrDefault(p => p.Id == productId);
-            return product?.Url ?? "/path/to/default-image.jpg"; // Provide a default image path if needed
-        }
-
-        private List<string> GetFlavorImages(string flavors)
-        {
-            var flavorIds = flavors.Split(',').Select(int.Parse).ToList();
-            var flavorImages = _context.Flavors
-                .Where(f => flavorIds.Contains(f.Id))
-                .Select(f => f.FlavorUrl)
-                .ToList();
-            return flavorImages;
-        }
-
-
-        public OrderItemsController(ApplicationDbContext context)
+     
+        public OrderItemsController(ApplicationDbContext context /*,ICartRepository cartRepo*//*IHttpContextAccessor httpContextAccessor,UserManager<IdentityUser> userManager*/)
         {
             _context = context;
+           
         }
+
+
 
         // GET: OrderItems
         public async Task<IActionResult> Index()
         {
             return View(await _context.OrderItems.ToListAsync());
         }
-    
+        // GET: OrderItems
+        public async Task<IActionResult> Cart()
+        {
+            var products = await _context.Products.ToListAsync();
+            var flavors = await _context.Flavors.ToListAsync();
+         
+            ViewData["Products"] = products;
+            ViewData["Flavors"] = flavors;
+            var filteredItems = await _context.OrderItems
+                  .Where(item => item.UserId == GetUserId()&&item.OrderId==0)
+                  .ToListAsync();
+
+
+            return View(filteredItems);
+        }
+        /// <summary>
+        /// This function called when user choose product to add to order
+        /// 
+        /// </summary>
+        /// <param name="productId">This is the ID of the product the user choose to add</param>
+        /// <returns>open view of createOrderItem to create orderItem based on the productID parameter</returns>
+        public async Task<IActionResult> CreateOrderItem(int? productId)
+        {
+            if (productId == null || _context.Products == null)
+            {
+                return NotFound();
+            }
+
+            var orderItem = new OrderItem();
+            orderItem.ProductId = (int)productId;
+
+          
+
+            var product = _context.Products.FirstOrDefault(p => p.Id == productId);
+            var flavors = _context.Flavors.ToList().Where(p => p.Category == product.Category);
+
+            ViewBag.Flavors = flavors;
+            ViewBag.Product = product;
+            return View(orderItem);
+        }
+
+
+        /// <summary>
+        /// Save the new orderItem 
+        /// </summary>
+        /// <param name="orderItem"></param>
+        /// <param name="flavors"></param>
+        /// <returns></returns>
+		[HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateOrderItem( OrderItem orderItem, List<int> flavors)
+        {
+
+            // Convert the list of selected flavors to a comma-separated string
+            string flavorsString = string.Join(",", flavors);
+
+            // Assign the selected flavors to the orderItem
+            orderItem.Flavors = flavorsString;
+            // Get the current user's ID from the User.Identity
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            var product = _context.Products.FirstOrDefault(p => p.Id == orderItem.ProductId);
+            orderItem.Price = product.Price;
+            if (userIdClaim == null)
+            {
+                // Handle the case where the user's ID claim is not found
+                return RedirectToAction("Login", "Account"); // Redirect to the login page or handle as needed
+            }
+
+            var currentUserId = userIdClaim.Value;
+
+            // Assign the current user's ID to the orderItem
+            orderItem.UserId = currentUserId;
+            // Add the order item to the context
+            _context.OrderItems.Add(orderItem);
+
+            // Save the changes to the context
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Cart");
+
+
+
+
+            //ViewBag.Flavors = new MultiSelectList(_context.Flavors.ToList(), "Id", "FlavorName");
+            //         ///the products for manue
+            //         var productsList = _context.Products.ToList();
+            //         return View(productsList);
+        }
 
         // GET: OrderItems/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -75,7 +155,7 @@ namespace CloudComputingProject.Controllers
         }
 
 
-    
+
 
         // POST: OrderItems/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -215,14 +295,26 @@ namespace CloudComputingProject.Controllers
             {
                 _context.OrderItems.Remove(orderItem);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool OrderItemExists(int id)
         {
-          return (_context.OrderItems?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.OrderItems?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        private string GetUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null)
+            {
+                // Handle the case where the user's ID claim is not found
+                return "000"; // Redirect to the login page or handle as needed
+            }
+
+            return userIdClaim.Value;
         }
     }
 }

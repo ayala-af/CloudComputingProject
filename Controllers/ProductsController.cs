@@ -7,46 +7,46 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CloudComputingProject.Data;
 using CloudComputingProject.Models;
+using Microsoft.AspNetCore.Authorization;
+using Firebase.Auth;
+using Firebase.Storage;
 
 namespace CloudComputingProject.Controllers
 {
+    /// <summary>
+    /// this controller managing Crud actions for product model
+    /// </summary>
+    /// 
+
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ProductsController(ApplicationDbContext context)
+        private readonly IWebHostEnvironment _env;
+        private static string ApiKey = "\r\nAIzaSyC2RqgkdowSHpmrXDrDGnJcWplh_3d3xAE";
+        private static string Bucket = "cloudcomputingproject-81c00.appspot.com";
+        private static string AuthEmail = "ayalaaftergut@gmail.com";
+        private static string AuthPassword = "15251015";
+
+        public ProductsController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
-
         // GET: Products
         public async Task<IActionResult> Index()
         {
-              return _context.Products != null ? 
-                          View(await _context.Products.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Products'  is null.");
+            return _context.Products != null ?
+                        View(await _context.Products.ToListAsync()) :
+                        Problem("Entity set 'ApplicationDbContext.Products'  is null.");
         }
         public async Task<IActionResult> ProductsMenu()
         {
-              return _context.Products != null ? 
-                          View(await _context.Products.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Products'  is null.");
+            return _context.Products != null ?
+                        View(await _context.Products.ToListAsync()) :
+                        Problem("Entity set 'ApplicationDbContext.Products'  is null.");
         }
 
-        public async Task<IActionResult> CreateOrderItem(int? id)
-        {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
-            var product = _context.Products.FirstOrDefault(p => p.Id == id);
-            var orderItem = new OrderItem();//create new orderItem for this product
-            orderItem.ProductId = (int)id;
-			var flavors = _context.Flavors.ToList().Where(p=>p.Categoty==product.Categoty);
-			ViewBag.Flavors = new MultiSelectList(flavors, "Id", "FlavorName");
-
-			return View(orderItem);
-        }
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -69,6 +69,7 @@ namespace CloudComputingProject.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
+
             return View();
         }
 
@@ -77,47 +78,70 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Categoty,Url,Price,IsAvailable")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,Category,Url,Price,MaxFlavorsNumber,IsAvailable")] Product product, IFormFile imageFile)
         {
+            
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // Check if an image file was uploaded
+                if ((imageFile != null && imageFile.Length > 0))
+                {
+                    var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                    var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                    FirebaseStorage firebaseStorage = new FirebaseStorage(
+                    Bucket,
+                    new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                        ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
+                    });
+
+
+                    // Define the path where you want to store the file in Firebase Storage
+                    string storagePath = "images/" + imageFile.FileName;
+
+                    // Upload the file to Firebase Storage
+                    try
+                    {
+                        using (var stream = imageFile.OpenReadStream())
+                        {
+                            var task = await firebaseStorage
+                                .Child(storagePath)
+                                .PutAsync(stream);
+
+
+                            product.Url = task;
+                            // downloadUrl כאן יכיל את ה-URL לתמונה שהועלתה
+                        }
+                        // Update the Product1 entity's ImageUrl property with the URL of the saved image
+
+                        // Save the product to the database, including the ImageUrl
+                        // ...
+                        _context.Add(product);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction("Index");
+                    }
+                    catch (Exception ex)
+                    {
+                        // טיפול בשגיאה במידה וההעלאה נכשלה
+                        Console.WriteLine("Exception was thrown: {0}", ex);
+                    }
+
+
+
+                    
+
+                }
             }
+            // Redirect to the index page or another appropriate action
             return View(product);
+
         }
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> CreateOrderItem(OrderItem orderItem, List<int> flavors)
-		{
-			if (ModelState.IsValid)
-			{
-				// Convert the list of selected flavors to a comma-separated string
-				string flavorsString = string.Join(",", flavors);
 
-				// Assign the selected flavors to the orderItem
-				orderItem.Flavors = flavorsString;
 
-				// Add the order item to the context
-				_context.OrderItems.Add(orderItem);
-
-				// Save the changes to the context
-				await _context.SaveChangesAsync();
-
-				return RedirectToAction(nameof(Index));
-			}
-
-			// Repopulate ViewBag.Products and ViewBag.Flavors in case of model validation errors
-			var productsList = _context.Products.ToList();
-
-			ViewBag.Flavors = new MultiSelectList(_context.Flavors.ToList(), "Id", "FlavorName");
-
-			return View(productsList);
-		}
-
-		// GET: Products/Edit/5
-		public async Task<IActionResult> Edit(int? id)
+        // GET: Products/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Products == null)
             {
@@ -137,7 +161,7 @@ namespace CloudComputingProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Categoty,Url,Price,IsAvailable")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Category,Url,Price,MaxFlavorsNumber,IsAvailable")] Product product,IFormFile? imageFile)
         {
             if (id != product.Id)
             {
@@ -148,8 +172,47 @@ namespace CloudComputingProject.Controllers
             {
                 try
                 {
+                    string productUrl;
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                        var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                        FirebaseStorage firebaseStorage = new FirebaseStorage(
+                            Bucket,
+                            new FirebaseStorageOptions
+                            {
+                                AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                                ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
+                            });
+
+                        // Define the path where you want to store the file in Firebase Storage
+                        string storagePath = "images/" + imageFile.FileName;
+
+                        // Upload the new image to Firebase Storage
+                        using (var stream = imageFile.OpenReadStream())
+                        {
+                            var task = await firebaseStorage
+                                .Child(storagePath)
+                                .PutAsync(stream);
+
+                             productUrl = task;
+                            // Update the URL property of the product with the new image URL
+                        }
+
+                        //// Delete the old image from Firebase Storage (if needed)
+                        //if (!string.IsNullOrEmpty(product.Url))
+                        //{
+                        //    await firebaseStorage
+                        //        .Child(product.Url)
+                        //        .DeleteAsync();
+                        //}
+                        product.Url = productUrl;
+                    }
+                   
                     _context.Update(product);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -162,8 +225,9 @@ namespace CloudComputingProject.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+              
             }
+       
             return View(product);
         }
 
@@ -199,14 +263,14 @@ namespace CloudComputingProject.Controllers
             {
                 _context.Products.Remove(product);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(int id)
         {
-          return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
