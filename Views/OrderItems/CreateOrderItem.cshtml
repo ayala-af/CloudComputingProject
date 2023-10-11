@@ -80,12 +80,12 @@
 
 <script>
     // Add JavaScript to hide the "Add to Cart" button if no flavor is selected
-    document.getElementById("addToCartButton").style.display = "none";
+    var addToCartButton = document.getElementById("addToCartButton");
+    addToCartButton.style.display = "none";
 
     document.querySelectorAll(".flavor-checkbox").forEach(function (checkbox) {
         checkbox.addEventListener("change", function () {
-            var selected flavors = document.querySelectorAll(".flavor-checkbox:checked");
-            var addToCartButton = document.getElementById("addToCartButton");
+            var selectedFlavors = document.querySelectorAll(".flavor-checkbox:checked");
             if (selectedFlavors.length > 0) {
                 addToCartButton.style.display = "inline";
             } else {
@@ -94,3 +94,9 @@
         });
     });
 </script>
+
+
+
+
+
+
