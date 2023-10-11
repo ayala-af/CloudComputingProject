@@ -55,6 +55,8 @@
             </form>
         </div>
         <script src="https://www.paypal.com/sdk/js?client-id=AdH-W3YFqF0r0e2ZdfpPB7AIabq4usrFvFHc3BmUxFv1QmuYvXkAL9pZjRAK_GgoujgB7Z5t_LwIxnMG&components=buttons"></script>
+        <div id="paypal-button-container"></div>
+
         <!-- Right column for shopping cart items -->
         <div class="col-md-6">
             @Html.Partial("_ShoppingCartPartial", ViewBag.OrderItems as IEnumerable<CloudComputingProject.Models.OrderItem>)
@@ -99,4 +101,38 @@
             });
         });
     </script>
+
+    <script>
+    paypal.Buttons({
+        style: {
+            disableMaxWidth: true
+        },
+        createOrder: function (data, actions) {
+    
+            var totalPrice = @TempData["Price"];
+
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: totalPrice
+                    }
+                }]
+            });
+        },
+        onApprove: function (data, actions) {
+            // Capture the funds from the transaction
+            return actions.order.capture().then(function (details) {
+                // Call your server to save the transaction
+                return fetch('Orders', {
+                    method: 'post',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orderID: data.orderID
+                    })
+                });
+            });
+        }
+    }).render('#paypal-button-container');</script>
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CloudComputingProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231004132921_AddUserIDToOrder")]
-    partial class AddUserIDToOrder
+    [Migration("20231011090932_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -180,7 +180,7 @@ namespace CloudComputingProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("CloudComputingProject.Models.OrderItem", b =>
