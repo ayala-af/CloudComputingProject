@@ -57,7 +57,7 @@ namespace CloudComputingProject.Controllers
         }
 
         // GET: Orders/Create
-        public async Task<IActionResult> Create(decimal orderTotal)
+        public async Task<IActionResult> Create(decimal? orderTotal)
         {
             string userId = GetUserId();
             var items = await _context.OrderItems.Where(item => item.UserId == userId && item.OrderId == 0).ToListAsync();
@@ -72,9 +72,16 @@ namespace CloudComputingProject.Controllers
             ViewBag.OrderItems = items;
             ViewBag.products = await _context.Products.ToListAsync();
             ViewBag.Flavors = await _context.Flavors.ToListAsync();
+            TempData["OrderItems"] = items;
             TempData["Price"] = items.Sum(item => item.Price);
             return View();
         }
+        //public async Task<IActionResult> Paypal(Order order)
+        //{
+        //    string userId = GetUserId();
+        //    order.Items= await _context.OrderItems.Where(item => item.UserId == userId && item.OrderId == order.Id).ToListAsync();
+        //    return View(order);
+        //}
 
         // POST: Orders/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.

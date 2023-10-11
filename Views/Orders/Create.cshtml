@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    <meta charset="UTF-16">
 }
 
 <div class="container mt-4">
@@ -101,38 +102,64 @@
             });
         });
     </script>
-
+    @using Newtonsoft.Json
     <script>
-    paypal.Buttons({
-        style: {
-            disableMaxWidth: true
-        },
-        createOrder: function (data, actions) {
-    
-            var totalPrice = @TempData["Price"];
+        paypal.Buttons({
+            style: {
+                disableMaxWidth: true
+            },
+            createOrder: function (data, actions) {
+                var items = @Html.Raw(JsonConvert.SerializeObject((@TempData["OrderItems"]as IEnumerable <CloudComputingProject.Models.OrderItem>)!.Select(item => new
+                {
+                sku = (item.Id+100000000).ToString(),
+                quantity = 1,
+                name = "product "+(item.Id).ToString(),
+                unit_amount = new
+                {
+                currency_code = "USD",
+                value = item.Price.ToString("0.00")
+                }
+                })));
+                var items1 = [];
+                items1.push(items);
+                return actions.order.create({
+                    purchase_units: [
+                        {
+                            amount: {
+                                currency_code: 'USD',
+                                value: '@TempData["Price"]',
+                                breakdown:
+                                {
+                                    item_total:
+                                    {
+                                        currency_code: "USD",
+                                        value: '@TempData["Price"]'
+                                    }
+                                }
 
-            return actions.order.create({
-                purchase_units: [{
-                    amount: {
-                        value: totalPrice
-                    }
-                }]
-            });
-        },
-        onApprove: function (data, actions) {
-            // Capture the funds from the transaction
-            return actions.order.capture().then(function (details) {
-                // Call your server to save the transaction
-                return fetch('Orders', {
-                    method: 'post',
-                    headers: {
-                        'content-type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        orderID: data.orderID
-                    })
+                            },
+                            items: items
+                        }
+                    ]
+
                 });
-            });
-        }
-    }).render('#paypal-button-container');</script>
-}
+
+            },
+            onApprove: function (data, actions) {
+                // Capture the funds from the transaction
+                return actions.order.capture().then(function (details) {
+                    // Call your server to save the transaction
+                    return fetch('Orders', {
+                        method: 'post',
+                        headers: {
+                            'content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderID: data.orderID
+                        })
+                    });
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+    }
