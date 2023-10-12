@@ -10,17 +10,20 @@ using CloudComputingProject.Models;
 using System.Security.Claims;
 using Newtonsoft.Json.Linq;
 using Firebase.Auth;
-
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNet.Identity;
 
 namespace CloudComputingProject.Controllers
 {
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public OrdersController(ApplicationDbContext context)
+        private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
+        public OrdersController(ApplicationDbContext context, Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
+
         }
 
         // GET: Orders
@@ -69,6 +72,17 @@ namespace CloudComputingProject.Controllers
             order.UserId = userId;
             //order.OrderDay = DateTime.UtcNow.DayOfWeek;
             //order.Items = orderItems;
+            var user = await _userManager.FindByIdAsync(userId);
+
+            // צרוך את המידע מהמשתמש והמודל שלו כמו שעשית בטופס
+            order.ClientFirstName = user.FirstName;
+            order.ClientLastName = user.LastName;
+            order.PhoneNumber = user.PhoneNumber;
+            order.Email = user.Email;
+            order.City = user.City;
+            order.Street = user.Street;
+            order.House = user.HouseNumber??0;
+            
 
             ViewBag.OrderItems = items;
             ViewBag.products = await _context.Products.ToListAsync();
