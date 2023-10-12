@@ -19,17 +19,17 @@ namespace CloudComputingProject.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IFileService _fileService;
+        //private readonly IFileService _fileService;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            IFileService fileService
+            SignInManager<ApplicationUser> signInManager//,
+         //   IFileService fileService
             )
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            this._fileService=fileService;
+           // this._fileService=fileService;
         }
 
         /// <summary>
@@ -65,7 +65,16 @@ namespace CloudComputingProject.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
-            public string Name{ get; set; }
+            [Display(Name = "First Name")]
+            public string FirstName{ get; set; }
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+            
+            public string City { get; set; }
+           
+            public string Street { get; set; }
+            [Display(Name = "House Number")]
+            public int HouseNumber { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
@@ -78,7 +87,11 @@ namespace CloudComputingProject.Areas.Identity.Pages.Account.Manage
             Input = new InputModel
             {
                 PhoneNumber = phoneNumber,
-                Name=user.Name
+                FirstName=user.FirstName,
+                LastName=user.LastName,
+                City = user.City,
+                Street = user.Street,
+                HouseNumber=user.HouseNumber??0,
             };
         }
 
@@ -119,10 +132,15 @@ namespace CloudComputingProject.Areas.Identity.Pages.Account.Manage
                 }
             }
 
-            if (Input.Name != user.Name )
+            if (Input.FirstName != user.FirstName )
             {
-               user.Name = Input.Name;
+               user.FirstName = Input.FirstName;
                await _userManager.UpdateAsync(user);
+            }
+            if (Input.LastName != user.LastName)
+            {
+                user.LastName = Input.LastName;
+                await _userManager.UpdateAsync(user);
             }
 
             await _signInManager.RefreshSignInAsync(user);

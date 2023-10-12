@@ -75,7 +75,27 @@ namespace CloudComputingProject.Areas.Identity.Pages.Account
             /// <summary>
             /// a Name field (added for the ApplicationUser)
             /// </summary>
-            public string? Name { get; set; }
+            public string? FirstName { get; set; }
+            /// <summary>
+            /// a Name field (added for the ApplicationUser)
+            /// </summary>
+            public string? LastName { get; set; }
+            /// <summary>
+            /// a Name field (added for the ApplicationUser)
+            /// </summary>
+            public string? City { get; set; }
+            /// <summary>
+            /// a Name field (added for the ApplicationUser)
+            /// </summary>
+            public string? Street { get; set; }
+            /// <summary>
+            /// a Name field (added for the ApplicationUser)
+            /// </summary>
+            public int? HouseNumber { get; set; }
+
+            [Phone]
+            [Display(Name = "Phone Number")]
+            public string? PhoneNumber { get; set; }
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -119,7 +139,12 @@ namespace CloudComputingProject.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-                user.Name=Input.Name;
+                user.FirstName = Input.FirstName;
+                user.LastName=Input.LastName;
+                user.City = Input.City;
+                user.Street = Input.Street;
+                user.HouseNumber = Input.HouseNumber;
+                user.PhoneNumber = Input.PhoneNumber;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);

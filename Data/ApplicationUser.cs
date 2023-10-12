@@ -4,6 +4,10 @@ namespace CloudComputingProject.Data
 {
     public class ApplicationUser:IdentityUser
     {
-        public string? Name  { get; set; }
+        public string? FirstName  { get; set; }
+        public string? LastName { get; set; }
+        public string? City { get; set; }
+        public string? Street { get; set; }
+        public int? HouseNumber { get; set; } //לבקוד אם זה בעייתי שזה לא נאלאייבל
     }
 }
