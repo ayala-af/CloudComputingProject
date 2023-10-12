@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    <meta charset="UTF-16">
 }
 
 <div class="container mt-4">
@@ -11,8 +10,13 @@
     <div class="row">
         <!-- Left column for form inputs -->
         <div class="col-md-6">
-            <form asp-action="Create" method="post">
+            <form id="checkout-form" method="post" class="form-contact">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+
+                    <input asp-for="UserId" hidden formenctype="multipart/form-data" class="form-control" />
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </div>
                 <div class="form-group">
                     <label asp-for="ClientFirstName">First Name</label>
                     <input asp-for="ClientFirstName" class="form-control" />
@@ -51,19 +55,66 @@
                 <!-- Add form fields for other properties in the Order model here -->
                 <div class="form-group">
                     <h3 id="total-price">Total Price: $@TempData["Price"]</h3>
-                    <input type="submit" value="Create" class="btn btn-primary" />
+
+                </div>
+                @if (TempData["IsPayed"] as bool? != true)
+                {
+                    <div class="border p-3 mb-5">
+                        <script src="https://www.paypal.com/sdk/js?client-id=AdH-W3YFqF0r0e2ZdfpPB7AIabq4usrFvFHc3BmUxFv1QmuYvXkAL9pZjRAK_GgoujgB7Z5t_LwIxnMG&components=buttons"></script>
+                        <div id="paypal-button-container"></div>
+                        <script>
+                            paypal.Buttons({
+                                style: {
+                                    disableMaxWidth: true
+                                },
+                                createOrder: function (data, actions) {
+
+                                    var totalPrice = @TempData["Price"];
+
+                                    return actions.order.create({
+                                        purchase_units: [{
+                                            amount: {
+                                                value: totalPrice
+                                            }
+                                        }]
+
+                                    });
+                                },
+                                onApprove: function (data, actions) {
+                                    // Capture the funds from the transaction
+                                    return actions.order.capture().then(function (details) {
+                                        // Call your server to save the transaction
+                                        try {
+                                            document.getElementById("checkout-form").submit();
+                                        }
+                                        catch (error) {
+                                            console.error(error);
+                                            // Handle the error or display an appropriate error message to the user
+                                            alert('An error occurred while processing your payment. Please try again later.');
+                                        }
+                                    });
+                                }
+                            }).render('#paypal-button-container');
+                        </script>
+                    </div>
+                }
+                <div>
+                    @if (TempData["IsPayed"] as bool? == true)
+                    {
+                        <h3 class="text-danger">Payment succeded,One or more of the details feilds are missing or incorrect</h3>
+                        <button type="submit" name="tryAgain" value="true" class="btn">Try Again</button>
+                    }
                 </div>
             </form>
         </div>
-        <script src="https://www.paypal.com/sdk/js?client-id=AdH-W3YFqF0r0e2ZdfpPB7AIabq4usrFvFHc3BmUxFv1QmuYvXkAL9pZjRAK_GgoujgB7Z5t_LwIxnMG&components=buttons"></script>
-        <div id="paypal-button-container"></div>
+
 
         <!-- Right column for shopping cart items -->
         <div class="col-md-6">
             @Html.Partial("_ShoppingCartPartial", ViewBag.OrderItems as IEnumerable<CloudComputingProject.Models.OrderItem>)
         </div>
     </div>
-    </div>
+</div>
 
 <!-- Modal and Scripts... -->
 <!-- Modal -->
@@ -102,64 +153,6 @@
             });
         });
     </script>
-    @using Newtonsoft.Json
-    <script>
-        paypal.Buttons({
-            style: {
-                disableMaxWidth: true
-            },
-            createOrder: function (data, actions) {
-                var items = @Html.Raw(JsonConvert.SerializeObject((@TempData["OrderItems"]as IEnumerable <CloudComputingProject.Models.OrderItem>)!.Select(item => new
-                {
-                sku = (item.Id+100000000).ToString(),
-                quantity = 1,
-                name = "product "+(item.Id).ToString(),
-                unit_amount = new
-                {
-                currency_code = "USD",
-                value = item.Price.ToString("0.00")
-                }
-                })));
-                var items1 = [];
-                items1.push(items);
-                return actions.order.create({
-                    purchase_units: [
-                        {
-                            amount: {
-                                currency_code: 'USD',
-                                value: '@TempData["Price"]',
-                                breakdown:
-                                {
-                                    item_total:
-                                    {
-                                        currency_code: "USD",
-                                        value: '@TempData["Price"]'
-                                    }
-                                }
 
-                            },
-                            items: items
-                        }
-                    ]
 
-                });
-
-            },
-            onApprove: function (data, actions) {
-                // Capture the funds from the transaction
-                return actions.order.capture().then(function (details) {
-                    // Call your server to save the transaction
-                    return fetch('Orders', {
-                        method: 'post',
-                        headers: {
-                            'content-type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            orderID: data.orderID
-                        })
-                    });
-                });
-            }
-        }).render('#paypal-button-container');
-    </script>
-    }
+}
