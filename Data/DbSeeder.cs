@@ -19,7 +19,7 @@ namespace CloudComputingProject.Data
             {
                 UserName="admin@gmail.com",
                 Email="admin@gmail.com",
-                Name="Admin",
+                FirstName="Admin",
                 EmailConfirmed=true,
                 PhoneNumberConfirmed=true,
     
