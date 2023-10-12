@@ -297,7 +297,7 @@ namespace CloudComputingProject.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Cart));
         }
 
         private bool OrderItemExists(int id)

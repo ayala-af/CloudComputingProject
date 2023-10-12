@@ -48,10 +48,22 @@
             {
                 <!-- Actions for cart view only -->
                 <div class="actions">
-                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm">Details</a>
-                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-primary btn-sm">Edit</a>
-                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">Remove</a>
-                </div>
+                    @* <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm">Details</a> *@
+                    @* <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-primary btn-sm">Edit</a> *@
+
+                      @*   <span class="remove-label" style="display: none;">Item Removed</span>
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="delete-form">
+                            @Html.AntiForgeryToken()
+                        
+                    </form> *@
+                    <div class="actions">
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="delete-form">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm remove-button">Delete</button>
+                        </form>
+                    </div>
+                   
+</div>
             }
         </div>
     }
@@ -89,7 +101,45 @@
 		margin-right: 5px;
 	}
 
+    .remove-label {
+        position: absolute;
+        background-color: rgba(255, 0, 0, 0.7);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 999;
+    }
 	.actions {
 		margin-top: 10px;
 	}
 </style>
+@section Scripts {
+    <script>
+        // JavaScript code to handle deletion and show the remove label
+        $(document).ready(function () {
+            $('.remove-button').click(function () {
+                var form = $(this).closest('.delete-form');
+                var removeLabel = form.siblings('.remove-label');
+
+                $.ajax({
+                    url: form.attr('action'),
+                    method: 'POST',
+                    data: form.serialize(),
+                    success: function (data) {
+                        if (data.success) {
+                            removeLabel.show();
+                            setTimeout(function () {
+                                removeLabel.hide();
+                            }, 2000); // Hide the label after 2 seconds (adjust as needed)
+                            form.closest('.cart-item').remove();
+                        }
+                    }
+                });
+
+                return false; // Prevent the form from submitting normally
+            });
+        });
+    </script>}
