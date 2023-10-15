@@ -54,8 +54,8 @@
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <input type="submit" value="Add To Cart" class="btn btn-primary" id="addToCartButton" />
+            <div class="form-group" id="addToCartGroup">
+                <input type="submit" value="Add To Cart" class="btn btn-primary" id="addToCartButton" style="display: none;" />
             </div>
         </form>
     </div>
@@ -78,25 +78,29 @@
     }
 </style>
 
-<script>
-    // Add JavaScript to hide the "Add to Cart" button if no flavor is selected
-    var addToCartButton = document.getElementById("addToCartButton");
-    addToCartButton.style.display = "none";
+@section Scripts {
+    <script>
+        // JavaScript code to handle flavor selection
+        $(document).ready(function () {
+            $('.flavor-checkbox').on('change', function () {
+                var selectedFlavors = $('.flavor-checkbox:checked');
+                var maxFlavors = $(this).data('max-flavors');
+                if (selectedFlavors.length > maxFlavors) {
+                    $(this).prop('checked', false);
+                    alert('You can select up to ' + maxFlavors + ' flavors.');
+                }
+                updateAddToCartButtonVisibility();
+            });
 
-    document.querySelectorAll(".flavor-checkbox").forEach(function (checkbox) {
-        checkbox.addEventListener("change", function () {
-            var selectedFlavors = document.querySelectorAll(".flavor-checkbox:checked");
-            if (selectedFlavors.length > 0) {
-                addToCartButton.style.display = "inline";
-            } else {
-                addToCartButton.style.display = "none";
+            function updateAddToCartButtonVisibility() {
+                var selectedFlavors = $('.flavor-checkbox:checked');
+                var addToCartButton = $('#addToCartButton');
+                if (selectedFlavors.length > 0) {
+                    addToCartButton.show();
+                } else {
+                    addToCartButton.hide();
+                }
             }
         });
-    });
-</script>
-
-
-
-
-
-
+    </script>
+}

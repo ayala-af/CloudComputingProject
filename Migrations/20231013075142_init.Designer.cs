@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CloudComputingProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231012175656_userapp_nullable_house_num")]
-    partial class userapp_nullable_house_num
+    [Migration("20231013075142_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -242,7 +242,7 @@ namespace CloudComputingProject.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MaxFlavorsNumber")
+                    b.Property<int>("MaxFlavorsNumber")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")

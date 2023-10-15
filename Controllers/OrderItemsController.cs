@@ -263,8 +263,7 @@ namespace CloudComputingProject.Controllers
             return View(orderItem);
         }
 
-        // GET: OrderItems/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null || _context.OrderItems == null)
             {
@@ -278,27 +277,13 @@ namespace CloudComputingProject.Controllers
                 return NotFound();
             }
 
-            return View(orderItem);
-        }
-
-        // POST: OrderItems/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.OrderItems == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.OrderItems'  is null.");
-            }
-            var orderItem = await _context.OrderItems.FindAsync(id);
-            if (orderItem != null)
-            {
-                _context.OrderItems.Remove(orderItem);
-            }
-
+            _context.OrderItems.Remove(orderItem);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction(nameof(Cart));
         }
+
+
 
         private bool OrderItemExists(int id)
         {

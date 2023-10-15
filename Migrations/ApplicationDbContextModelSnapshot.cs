@@ -240,7 +240,7 @@ namespace CloudComputingProject.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MaxFlavorsNumber")
+                    b.Property<int>("MaxFlavorsNumber")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")

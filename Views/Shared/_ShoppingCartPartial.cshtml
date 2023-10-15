@@ -6,7 +6,6 @@
     @foreach (var item in Model)
     {
         <div class="cart-item">
-            <!-- Item details -->
             @if (item.ProductId > 0)
             {
                 var products = ViewData["Products"] as List<Product>;
@@ -21,7 +20,6 @@
                     }
                 }
             }
-            <!-- Flavors -->
             <div class="flavors">
                 @if (!string.IsNullOrEmpty(item.Flavors))
                 {
@@ -43,19 +41,29 @@
                     }
                 }
             </div>
-            
+
             @if (ViewData["IsCartView"] as bool? == true)
             {
-                <!-- Actions for cart view only -->
                 <div class="actions">
-                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm">Details</a>
-                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-primary btn-sm">Edit</a>
-                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">Remove</a>
+                    @* <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm">Details</a> *@
+                    @* <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-primary btn-sm">Edit</a> *@
+
+                    @*   <span class="remove-label" style="display: none;">Item Removed</span>
+            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="delete-form">
+            @Html.AntiForgeryToken()
+
+            </form> *@
+                   
+                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-primary">Delete</a>
+
+
                 </div>
             }
         </div>
     }
 </div>
+
+  
 
 
 
@@ -89,7 +97,19 @@
 		margin-right: 5px;
 	}
 
+    .remove-label {
+        position: absolute;
+        background-color: rgba(255, 0, 0, 0.7);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 999;
+    }
 	.actions {
 		margin-top: 10px;
 	}
 </style>
+

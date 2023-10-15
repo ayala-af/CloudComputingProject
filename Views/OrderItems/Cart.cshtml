@@ -24,7 +24,7 @@
     ViewData["IsCartView"] = true;
 }
 <form asp-action="Create" method="post">
-    <input type="hidden" name="orderTotal" value="@Model.Sum(item => (ViewData["Products"] as List<Product>)?.FirstOrDefault(p => p.Id == item.ProductId)?.Price ?? 0)" />
+    @* <input type="hidden" name="orderTotal" value="@Model.Sum(item => (ViewData["Products"] as List<Product>)?.FirstOrDefault(p => p.Id == item.ProductId)?.Price ?? 0)" /> *@
     <div class="container mt-4">
         @if (Model.Count() != 0)
         {
