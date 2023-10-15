@@ -11,7 +11,7 @@ using System.Security.Claims;
 using Newtonsoft.Json.Linq;
 using Firebase.Auth;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace CloudComputingProject.Controllers
 {
