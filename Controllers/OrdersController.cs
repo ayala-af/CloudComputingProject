@@ -89,6 +89,7 @@ namespace CloudComputingProject.Controllers
             ViewBag.Flavors = await _context.Flavors.ToListAsync();
             TempData["Price"] = items.Sum(item => item.Price);
             TempData["IsPayed"] = false;
+            TempData["OrderItems"]=items;
             return View(order);
         }
 
