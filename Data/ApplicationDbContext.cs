@@ -13,9 +13,7 @@ namespace CloudComputingProject.Data
         }
         public DbSet<Product> Products { get; set; }
         public DbSet<Flavor> Flavors { get; set; }
-       // public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Order> Orders { get; set; }
-     //   public DbSet<CloudComputingProject.Models.Product1>? Product1 { get; set; }
     }
 }
