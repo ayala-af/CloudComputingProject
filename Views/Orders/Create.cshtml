@@ -57,6 +57,7 @@
                     <h3 id="total-price">Total Price: $@TempData["Price"]</h3>
 
                 </div>
+                @using Newtonsoft.Json
                 @if (TempData["IsPayed"] as bool? != true)
                 {
                     <div class="border p-3 mb-5">
@@ -69,16 +70,41 @@
                                 },
                                 createOrder: function (data, actions) {
 
-                                    var totalPrice = @TempData["Price"];
-
+                                    var items = @Html.Raw(JsonConvert.SerializeObject((@TempData["OrderItems"]as IEnumerable <CloudComputingProject.Models.OrderItem>)!.Select(item => new
+                                    {
+                                    sku = (item.Id+100000000).ToString(),
+                                    quantity = 1,
+                                    name = "product "+(item.Id).ToString(),
+                                    unit_amount = new
+                                    {
+                                    currency_code = "USD",
+                                    value = item.Price.ToString("0.00")
+                                    }
+                                    })));
+                                    var items1 = [];
+                                    items1.push(items);
                                     return actions.order.create({
-                                        purchase_units: [{
-                                            amount: {
-                                                value: totalPrice
+                                        purchase_units: [
+                                            {
+                                                amount: {
+                                                    currency_code: 'USD',
+                                                    value: '@TempData["Price"]',
+                                                    breakdown:
+                                                    {
+                                                        item_total:
+                                                        {
+                                                            currency_code: "USD",
+                                                            value: '@TempData["Price"]'
+                                                        }
+                                                    }
+
+                                                },
+                                                items: items
                                             }
-                                        }]
+                                        ]
 
                                     });
+
                                 },
                                 onApprove: function (data, actions) {
                                     // Capture the funds from the transaction
