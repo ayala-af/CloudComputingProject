@@ -22,30 +22,33 @@
             @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group" style="display:none">
-                <label asp-for="ProductId" class="control-label">Product ID</label>
-                <span class="form-control" readonly>@Model.ProductId</span>
-                <input type="hidden" asp-for="ProductId" />
-                <span asp-validation-for="ProductId" class="text-danger"></span>
-            </div>
+            <ul class="form-group">
+                <li>
+                    <label asp-for="ProductId" class="control-label">Product ID</label>
+                    <span class="form-control" readonly>@Model.ProductId</span>
+                    <input type="hidden" asp-for="ProductId" />
+                    <span asp-validation-for="ProductId" class="text-danger"></span>
+                </li>
 
-            <div class="form-group">
-                <label asp-for="Flavors" class="h4">Select up to @ViewBag.product.MaxFlavorsNumber Flavors</label>
-                <div id="flavor-selection" style="display: flex; flex-wrap: wrap;">
-                    @foreach (var flavor in ViewBag.Flavors)
-                    {
-                        <div style="padding: 5px;">
-                            <div class="text-center">
-                                <img src="@flavor.FlavorUrl" alt="@flavor.FlavorName" class="flavor-image" style="width: 60px; height: 60px;" />
+                <li>
+                    <label asp-for="Flavors" class="h4">Select up to @ViewBag.product.MaxFlavorsNumber Flavors</label>
+                    <div id="flavor-selection" style="display: flex; flex-wrap: wrap;">
+                        @foreach (var flavor in ViewBag.Flavors)
+                        {
+                            <div style="padding: 5px;">
+                                <div class="text-center">
+                                    <img src="@flavor.FlavorUrl" alt="@flavor.FlavorName" class="flavor-image" style="width: 60px; height: 60px;" />
+                                </div>
+                                <div class="checkbox text-center" style="margin-top: 10px;">
+                                    <input type="checkbox" class="flavor-checkbox" name="flavors" data-max-flavors="@ViewBag.product.MaxFlavorsNumber" value="@flavor.Id" />
+                                    <label for="SelectedFlavors">@flavor.FlavorName</label>
+                                </div>
                             </div>
-                            <div class="checkbox text-center" style="margin-top: 10px;">
-                                <input type="checkbox" class="flavor-checkbox" name="flavors" data-max-flavors="@ViewBag.product.MaxFlavorsNumber" value="@flavor.Id" />
-                                <label for="SelectedFlavors">@flavor.FlavorName</label>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
+                        }
+                    </div>
+                </li>
+            </ul>
+           
 
             <div class="form-group">
                 <label asp-for="Price" class="control-label">Price</label>
