@@ -33,6 +33,10 @@
     <Folder Include="wwwroot\Uploads\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GatewayApiProject\GatewayApiProject.csproj" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
