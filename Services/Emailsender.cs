@@ -6,8 +6,8 @@ namespace CloudComputingProject
     {
         private readonly string smtpHost = "smtp.gmail.com";
         private readonly int smtpPort = 587;
-        private readonly string smtpUsername = "rotitovy@gmail.com";
-        private readonly string smtpPassword = "obur ltdx dmib qetw\r\n";
+        private readonly string smtpUsername = "frozenicecreamonline@gmail.com";
+        private readonly string smtpPassword = "zcbs vllv tvtx dpyu\r\n";
 
         public void SendEmail(string to, string subject, string body)
         {
