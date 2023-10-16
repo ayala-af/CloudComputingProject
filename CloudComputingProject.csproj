@@ -5,38 +5,44 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-CloudComputingProject-cf191516-e364-4f21-a965-41c92e06a0c7</UserSecretsId>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Firebase.Auth" Version="1.0.0" />
-    <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
-    <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.20" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.21" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.21" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.21" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.21" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.21">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
-    <PackageReference Include="PayPal" Version="1.9.1" />
-    <PackageReference Include="PayPalCheckoutSdk.DotNet6" Version="1.0.2" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
-    <PackageReference Include="System.Web.Http.Common" Version="4.0.20126.16343" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Firebase.Auth" Version="1.0.0" />
+		<PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
+		<PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.4" />
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.20" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.21" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.21" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.21" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.21" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.21">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+		<PackageReference Include="PayPal" Version="1.9.1" />
+		<PackageReference Include="PayPalCheckoutSdk.DotNet6" Version="1.0.2" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+		<PackageReference Include="System.Web.Http.Common" Version="4.0.20126.16343" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\Migrations\" />
-    <Folder Include="Migrations\" />
-    <Folder Include="wwwroot\Uploads\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Data\Migrations\" />
+		<Folder Include="Migrations\" />
+		<Folder Include="wwwroot\Uploads\" />
+	</ItemGroup>
 
-  <!--<ItemGroup>
-    <ProjectReference Include="..\GatewayApiProject\GatewayApiProject.csproj" />
-  </ItemGroup>-->
+	<ItemGroup>
+		<ProjectReference Include="GatewayApiProject\GatewayApiProject.csproj" />
+	</ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+	<ProjectExtensions>
+		<VisualStudio>
+			<UserProperties properties_4launchsettings_1json__JsonSchema="" />
+		</VisualStudio>
+	</ProjectExtensions>
 
 </Project>

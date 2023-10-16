@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34018.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudComputingProject", "CloudComputingProject.csproj", "{8BAA514F-1D2A-4F66-89EC-34C678A1B94D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayApiProject", "..\GatewayApiProject\GatewayApiProject.csproj", "{25861537-3B27-4C3D-BADC-FE79FD78715F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayApiProject", "GatewayApiProject\GatewayApiProject.csproj", "{25861537-3B27-4C3D-BADC-FE79FD78715F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
