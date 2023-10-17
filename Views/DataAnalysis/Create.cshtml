@@ -1,13 +1,12 @@
 ﻿@{
-   // var productIds = TempData["ProductIds"] as int[];
     var totalOrders = TempData["TotalOrders"] as int[];
     var productNames = TempData["ProductNames"] as string[];
 
-    var flavorId = TempData["FlavorId"] as List< string[]>;
-    var flavorCount = TempData["FlavorCount"] as List<int[]>;
+    var flavorProductNames = TempData["FlavorProductNames"] as List< string[]>;
+    var flavorProductCount = TempData["FlavorProductCount"] as List<int[]>;
 
-    var flavorId1 = TempData["FlavorId1"] as List<string>;
-    var totalSales1 =TempData["TotalSales1"] as List<int>;
+    var flavorName = TempData["FlavorName"] as List<string>;
+    var flavorTotalSale = TempData["FlavorTotalSale"] as List<int>;
 }
 
 
@@ -44,9 +43,8 @@
         // המרת מערכים C# למערכים ב-JavaScript
         var productNames = @Html.Raw(Json.Serialize(productNames));
         var totalOrders = @Html.Raw(Json.Serialize(totalOrders));
-        // var productIds = /* @Html./* Raw(Json.Serialize(productIds)); */ */
-        var flavorId = @Html.Raw(Json.Serialize(flavorId));
-        var flavorCount = @Html.Raw(Json.Serialize(flavorCount));
+        var flavorProductNames = @Html.Raw(Json.Serialize(flavorProductNames));
+        var flavorProductCount = @Html.Raw(Json.Serialize(flavorProductCount));
 
       
         var data = {
@@ -79,8 +77,8 @@
 
             // Get the index of the clicked bar
             var clickedBarIndex = res[0].index;
-            var clickedFlavorId = flavorId[clickedBarIndex];
-            var clickedFlavorCount = flavorCount[clickedBarIndex];
+            var clickedFlavorId = flavorProductNames[clickedBarIndex];
+            var clickedFlavorCount = flavorProductCount[clickedBarIndex];
 
             alert('You clicked on ' + res[0].index);
 
@@ -107,12 +105,12 @@
 
 
 
-        var flavorId1 = @Html.Raw(Json.Serialize(flavorId1));
-        var totalSales1 = @Html.Raw(Json.Serialize(totalSales1));
+        var flavorName = @Html.Raw(Json.Serialize(flavorName));
+        var FlavorTotalSale = @Html.Raw(Json.Serialize(flavorTotalSale));
         var data2 = {
-            labels: flavorId1,
+            labels: flavorName,
             datasets: [{
-                data: totalSales1
+                data: FlavorTotalSale
             }]
         };
         var canvas2 = document.getElementById('myChart2');
