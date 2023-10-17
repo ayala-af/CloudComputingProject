@@ -58,6 +58,8 @@ namespace CloudComputingProject.Controllers
         /// <returns>open view of createOrderItem to create orderItem based on the productID parameter</returns>
         public async Task<IActionResult> CreateOrderItem(int? productId)
         {
+         //   emailsender e = new emailsender();
+            //e.SendEmail("rotitovy@gmail.com", "WORK BH", "8888888");
             if (productId == null || _context.Products == null)
             {
                 return NotFound();

@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using Firebase.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 
 namespace CloudComputingProject.Controllers
 {
@@ -110,7 +111,7 @@ namespace CloudComputingProject.Controllers
 
                 // Set the order properties
                 order.TotalPrice = order.Items.Sum(p => p.Price);
-                order.OrderDate = DateTime.UtcNow;
+                order.OrderDate = DateTime.Now;
 
                 order.OrderDay = DateTime.UtcNow.DayOfWeek;
 
@@ -128,9 +129,12 @@ namespace CloudComputingProject.Controllers
                     _context.Update(item);
                 }
                 await _context.SaveChangesAsync();
+              
+            var emailSender = new emailsender();
+            emailSender.SendEmail(User.FindFirst(ClaimTypes.Email).ToString(), "Order Confirmation","Thank you for your order");
 
-                // Redirect to the index page
-                return RedirectToAction(nameof(Details), new { Id = order.Id });
+            // Redirect to the index page
+            return RedirectToAction(nameof(Details), new { Id = order.Id });
             }
 
             string userId = GetUserId();

@@ -23,7 +23,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <ul class="form-group">
-                <li>
+                <li style="visibility:hidden">
                     <label asp-for="ProductId" class="control-label">Product ID</label>
                     <span class="form-control" readonly>@Model.ProductId</span>
                     <input type="hidden" asp-for="ProductId" />
