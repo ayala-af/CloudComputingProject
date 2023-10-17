@@ -1,0 +1,46 @@
+﻿@{
+    var productIds = TempData["ProductIds"] as int[];
+    var totalOrders = TempData["TotalOrders"] as int[];
+    var productNames = TempData["ProductNames"] as string[];
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>סרט מחולק לחתיכות</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div style="width: 80%; margin: auto;">
+        <canvas id="myChart"></canvas>
+    </div>
+    <div>
+        <form method="get" action="/Orders/Create">
+            <label for="startDate">Start Date: </label>
+            <input type="date" id="startDate" name="start" required>
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="end" required>
+            <button type="submit">Generate Graph</button>
+        </form>
+    </div>
+    <script>
+        // המרת מערכים C# למערכים ב-JavaScript
+        var productNames = @Html.Raw(Json.Serialize(productNames));
+        var totalOrders = @Html.Raw(Json.Serialize(totalOrders));
+
+        var data = {
+            labels: productNames,
+            datasets: [{
+                data: totalOrders
+            }]
+        };
+
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: data
+        });
+    </script>
+</body>
+</html>

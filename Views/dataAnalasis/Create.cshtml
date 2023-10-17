@@ -1,0 +1,127 @@
+﻿@{
+   // var productIds = TempData["ProductIds"] as int[];
+    var totalOrders = TempData["TotalOrders"] as int[];
+    var productNames = TempData["ProductNames"] as string[];
+
+    var flavorId = TempData["FlavorId"] as List< string[]>;
+    var flavorCount = TempData["FlavorCount"] as List<int[]>;
+
+    var flavorId1 = TempData["FlavorId1"] as List<string>;
+    var totalSales1 =TempData["TotalSales1"] as List<int>;
+}
+
+
+<head>
+    <title>סרט מחולק לחתיכות</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div>
+        <form action="/dataAnalasis/Create" method="get">
+            <div class="form-group">
+                <label for="startDate">תאריך התחלה:</label>
+                <input type="date" name="startDate"   />
+            </div>
+            <div class="form-group">
+                <label for="endDate">תאריך סיום:</label>
+                <input type="date" name="endDate" />
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <div style="width: 80%; margin: auto;">
+        <canvas id="myChart"></canvas>
+        </div>
+    <div style="width: 80%; margin: auto;">
+        <canvas id="myChart1"></canvas>
+    </div>
+
+    <div style="width: 80%; margin: auto;">
+        <canvas id="myChart2"></canvas>
+    </div>
+
+    <script>
+        // המרת מערכים C# למערכים ב-JavaScript
+        var productNames = @Html.Raw(Json.Serialize(productNames));
+        var totalOrders = @Html.Raw(Json.Serialize(totalOrders));
+        // var productIds = /* @Html./* Raw(Json.Serialize(productIds)); */ */
+        var flavorId = @Html.Raw(Json.Serialize(flavorId));
+        var flavorCount = @Html.Raw(Json.Serialize(flavorCount));
+
+      
+        var data = {
+            labels: productNames,
+            datasets: [{
+                data: totalOrders
+            }]
+        };
+        var canvas = document.getElementById('myChart');
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: data
+        });
+        var myChart1; // המשתנה myChart1 מוגדר מחוץ לפונקציה
+        var canvas1 = document.getElementById('myChart1');
+        var ctx1 = canvas1.getContext('2d');
+
+        canvas.onclick = (evt) => {
+            const res = chart.getElementsAtEventForMode(
+                evt,
+                'nearest',
+                { intersect: true },
+                true
+            );
+            // If didn't click on a bar, `res` will be an empty array
+            if (res.length === 0) {
+                return;
+            }
+
+            // Get the index of the clicked bar
+            var clickedBarIndex = res[0].index;
+            var clickedFlavorId = flavorId[clickedBarIndex];
+            var clickedFlavorCount = flavorCount[clickedBarIndex];
+
+            alert('You clicked on ' + res[0].index);
+
+            // Check if myChart1 exists and destroy it
+            if (myChart1) {
+                myChart1.destroy();
+            }
+
+            // Create or update the chart in myChart1
+            myChart1 = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: clickedFlavorId,
+                    datasets: [{
+                        label: 'Easy as',
+                        data: clickedFlavorCount
+                    }],
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        };
+
+
+
+        var flavorId1 = @Html.Raw(Json.Serialize(flavorId1));
+        var totalSales1 = @Html.Raw(Json.Serialize(totalSales1));
+        var data2 = {
+            labels: flavorId1,
+            datasets: [{
+                data: totalSales1
+            }]
+        };
+        var canvas2 = document.getElementById('myChart2');
+        var ctx2 = document.getElementById('myChart2').getContext('2d');
+        var chart2 = new Chart(ctx2, {
+            type: 'bar',
+            data: data2
+        });
+    </script>
+
+</body>
+
