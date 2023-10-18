@@ -11,11 +11,11 @@ namespace GatewayApiProject.Controllers
     {
         // GET: api/<ImaggaController>
         [HttpGet]
-        public string Get()
+        public Root Get()
         {
             var check = new ImaggaResponse();
             var result = check.CheckImage("https://i.pinimg.com/474x/1c/99/cd/1c99cd0b613dd3a9be4f8120e33f8fcd.jpg");
-            return result.ToString();
+            return result;
         }
 
         // GET api/<ImaggaController>/5

@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Newtonsoft.Json;
+using RestSharp;
 
 namespace GatewayApiProject.Models
 {
@@ -6,7 +7,7 @@ namespace GatewayApiProject.Models
     {
         // This examples is using RestSharp as a REST client - http://restsharp.org
 
-            public string  CheckImage(string imageUrl)
+            public Root  CheckImage(string imageUrl)
             {
                 string apiKey = "acc_400d45350deded3";
                 string apiSecret = "504cbaae38a9e6fc064acc80abd37e3d";
@@ -20,10 +21,42 @@ namespace GatewayApiProject.Models
                 request.AddParameter("image_url", imageUrl);
                 request.AddHeader("Authorization", String.Format("Basic {0}", basicAuthValue));
 
-                RestResponse response = client.Execute(request);
+            RestResponse response = client.Execute(request);
+            Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(response.Content);
+
             //Console.WriteLine(response.Content);
             //Console.ReadLine();
-            return response.Content;
+            return myDeserializedClass;
             }
         }
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+    public class ImaggaResult
+    {
+        public List<Tag> tags { get; set; }
     }
+
+    public class Root
+    {
+        public ImaggaResult result { get; set; }
+        public Status status { get; set; }
+    }
+
+    public class Status
+    {
+        public string text { get; set; }
+        public string type { get; set; }
+    }
+
+    public class Tag
+    {
+        public double confidence { get; set; }
+        public Tag2 tag2 { get; set; }
+    }
+
+    public class Tag2
+    {
+        public string en { get; set; }
+    }
+
+
+}
