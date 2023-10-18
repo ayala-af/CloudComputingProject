@@ -11,7 +11,7 @@ namespace GatewayApiProject.Controllers
     {
         // GET: api/<ImaggaController>
         [HttpGet]
-        public string Get()
+        public Root Get()
         {
             var check = new ImaggaResponse();
             var result = check.CheckImage("https://cdn.britannica.com/50/80550-050-5D392AC7/Scoops-kinds-ice-cream.jpg");
