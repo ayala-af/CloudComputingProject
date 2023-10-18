@@ -14,7 +14,7 @@ namespace GatewayApiProject.Controllers
         public string Get()
         {
             var check = new ImaggaResponse();
-            var result = check.CheckImage("https://i.pinimg.com/474x/1c/99/cd/1c99cd0b613dd3a9be4f8120e33f8fcd.jpg");
+            var result = check.CheckImage("https://cdn.britannica.com/50/80550-050-5D392AC7/Scoops-kinds-ice-cream.jpg");
             return result.ToString();
         }
 
