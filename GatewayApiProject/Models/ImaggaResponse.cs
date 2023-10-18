@@ -32,7 +32,7 @@ namespace GatewayApiProject.Models
     // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     public class ImaggaResult
     {
-        public List<Tag> tags { get; set; }
+        public List<Tag2> tags{ get; set; }
     }
 
     public class Root
@@ -47,13 +47,13 @@ namespace GatewayApiProject.Models
         public string type { get; set; }
     }
 
-    public class Tag
+    public class Tag2
     {
         public double confidence { get; set; }
-        public Tag2 tag2 { get; set; }
+        public Tag tag { get; set; }
     }
 
-    public class Tag2
+    public class Tag
     {
         public string en { get; set; }
     }
