@@ -11,11 +11,23 @@ namespace GatewayApiProject.Controllers
     {
         // GET: api/<ImaggaController>
         [HttpGet]
-        public Root Get()
+        public bool Get(string url,string typeOfImage,double threshold)
         {
+            
             var check = new ImaggaResponse();
             var result = check.CheckImage("https://cdn.britannica.com/50/80550-050-5D392AC7/Scoops-kinds-ice-cream.jpg");
-            return result;
+           if (result != null&&result.status.type=="success" )
+            {
+                foreach(var item in result.result.tags)
+                {
+                    if (item.tag.en.Equals(typeOfImage)&&item.confidence>=threshold)
+                    {
+                       return true;
+                    }
+                }
+            }
+           return false;
+            
         }
 
         // GET api/<ImaggaController>/5
