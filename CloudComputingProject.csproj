@@ -9,6 +9,13 @@
 	<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="GatewayApiProject\**" />
+    <Content Remove="GatewayApiProject\**" />
+    <EmbeddedResource Remove="GatewayApiProject\**" />
+    <None Remove="GatewayApiProject\**" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Firebase.Auth" Version="1.0.0" />
 		<PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
@@ -23,9 +30,11 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="PayPal" Version="1.9.1" />
 		<PackageReference Include="PayPalCheckoutSdk.DotNet6" Version="1.0.2" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+		<PackageReference Include="System.Net.Http" Version="4.3.4" />
 		<PackageReference Include="System.Web.Http.Common" Version="4.0.20126.16343" />
 	</ItemGroup>
 
