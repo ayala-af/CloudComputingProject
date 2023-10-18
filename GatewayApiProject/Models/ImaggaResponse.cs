@@ -14,9 +14,9 @@ namespace GatewayApiProject.Models
                 string basicAuthValue = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(String.Format("{0}:{1}", apiKey, apiSecret)));
 
                 var client = new RestClient("https://api.imagga.com/v2/tags");
-              //  client.Timeout = -1;
+            //  client.Timeout = -1;
 
-                var request = new RestRequest(Method.Get.ToString());
+            var request = new RestRequest();
                 request.AddParameter("image_url", imageUrl);
                 request.AddHeader("Authorization", String.Format("Basic {0}", basicAuthValue));
 
