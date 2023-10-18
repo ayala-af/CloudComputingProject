@@ -32,7 +32,6 @@
 	<ItemGroup>
 		<Folder Include="Data\Migrations\" />
 		<Folder Include="Migrations\" />
-		<Folder Include="wwwroot\Uploads\" />
 	</ItemGroup>
 
 	<ItemGroup>

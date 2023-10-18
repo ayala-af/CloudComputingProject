@@ -17,20 +17,8 @@ namespace CloudComputingProject.Controllers
 
 
         }
-        // GET: dataAnalasisController
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: dataAnalasisController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: dataAnalasisController/Create
-        public ActionResult Create(DateTime? startDate, DateTime? endDate)
+     
+        public ActionResult Index(DateTime? startDate, DateTime? endDate)
         {
             try
             {
@@ -105,62 +93,5 @@ namespace CloudComputingProject.Controllers
         }
 
 
-        // POST: dataAnalasisController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: dataAnalasisController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: dataAnalasisController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: dataAnalasisController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: dataAnalasisController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿@model CloudComputingProject.Models.Order
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -81,8 +81,7 @@
                                     value = item.Price.ToString("0.00")
                                     }
                                     })));
-                                    var items1 = [];
-                                    items1.push(items);
+                                    
                                     return actions.order.create({
                                         purchase_units: [
                                             {

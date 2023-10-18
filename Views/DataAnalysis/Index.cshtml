@@ -1,46 +1,133 @@
 ﻿@{
-    var productIds = TempData["ProductIds"] as int[];
     var totalOrders = TempData["TotalOrders"] as int[];
     var productNames = TempData["ProductNames"] as string[];
+
+    var flavorProductNames = TempData["FlavorProductNames"] as List<string[]>;
+    var flavorProductCount = TempData["FlavorProductCount"] as List<int[]>;
+
+    var flavorName = TempData["FlavorName"] as List<string>;
+    var flavorTotalSale = TempData["FlavorTotalSale"] as List<int>;
 }
 
-<!DOCTYPE html>
-<html>
+
 <head>
     <title>סרט מחולק לחתיכות</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
-    <div style="width: 80%; margin: auto;">
-        <canvas id="myChart"></canvas>
-    </div>
     <div>
-        <form method="get" action="/Orders/Create">
-            <label for="startDate">Start Date: </label>
-            <input type="date" id="startDate" name="start" required>
-            <label for="endDate">End Date:</label>
-            <input type="date" id="endDate" name="end" required>
-            <button type="submit">Generate Graph</button>
+        <form action="/DataAnalysis/Index" method="get">
+            <div class="form-group">
+                <label for="startDate">תאריך התחלה:</label>
+                <input type="date" name="startDate" />
+            </div>
+            <div class="form-group">
+                <label for="endDate">תאריך סיום:</label>
+                <input type="date" name="endDate" />
+            </div>
+            <button type="submit">Submit</button>
         </form>
     </div>
+    <div style="display:flex;">
+        <div style="width: 60%; margin: auto;">
+            <h1>Product Sales</h1>
+            <canvas id="myChart"></canvas>
+
+        </div>
+
+        <div style="width: 35%; margin: auto;">
+            <h2>Distribution of the flavors sales of the selected product</h2>
+            <canvas id="myChart1"></canvas>
+        </div>
+    </div>
+
+    <div style="width: 40%; margin: auto;">
+        <h1>flavors sales</h1>
+        <canvas id="myChart2"></canvas>
+    </div>
+
     <script>
         // המרת מערכים C# למערכים ב-JavaScript
         var productNames = @Html.Raw(Json.Serialize(productNames));
         var totalOrders = @Html.Raw(Json.Serialize(totalOrders));
+        var flavorProductNames = @Html.Raw(Json.Serialize(flavorProductNames));
+        var flavorProductCount = @Html.Raw(Json.Serialize(flavorProductCount));
+
 
         var data = {
             labels: productNames,
             datasets: [{
+                label: 'Products Sales',
                 data: totalOrders
             }]
         };
-
+        var canvas = document.getElementById('myChart');
         var ctx = document.getElementById('myChart').getContext('2d');
-        var myBarChart = new Chart(ctx, {
+        var chart = new Chart(ctx, {
             type: 'bar',
             data: data
         });
+        var myChart1; // המשתנה myChart1 מוגדר מחוץ לפונקציה
+        var canvas1 = document.getElementById('myChart1');
+        var ctx1 = canvas1.getContext('2d');
+
+        canvas.onclick = (evt) => {
+            const res = chart.getElementsAtEventForMode(
+                evt,
+                'nearest',
+                { intersect: true },
+                true
+            );
+            // If didn't click on a bar, `res` will be an empty array
+            if (res.length === 0) {
+                return;
+            }
+
+            // Get the index of the clicked bar
+            var clickedBarIndex = res[0].index;
+            var clickedFlavorId = flavorProductNames[clickedBarIndex];
+            var clickedFlavorCount = flavorProductCount[clickedBarIndex];
+
+
+
+            // Check if myChart1 exists and destroy it
+            if (myChart1) {
+                myChart1.destroy();
+            }
+
+            // Create or update the chart in myChart1
+            myChart1 = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: clickedFlavorId,
+                    datasets: [{
+                        label: 'Easy as',
+                        data: clickedFlavorCount
+                    }],
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        };
+
+
+
+        var flavorName = @Html.Raw(Json.Serialize(flavorName));
+        var FlavorTotalSale = @Html.Raw(Json.Serialize(flavorTotalSale));
+        var data2 = {
+            labels: flavorName,
+            datasets: [{
+                label: "Flavor sales",
+                data: FlavorTotalSale
+            }]
+        };
+        var canvas2 = document.getElementById('myChart2');
+        var ctx2 = document.getElementById('myChart2').getContext('2d');
+        var chart2 = new Chart(ctx2, {
+            type: 'polarArea',
+            data: data2
+        });
     </script>
+
 </body>
-</html>

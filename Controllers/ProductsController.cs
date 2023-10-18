@@ -66,14 +66,14 @@ namespace CloudComputingProject.Controllers
             return View(product);
         }
 
-        // GET: Products/Create
+        // GET: Products/Index
         public IActionResult Create()
         {
 
             return View();
         }
 
-        // POST: Products/Create
+        // POST: Products/Index
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]

@@ -20,22 +20,21 @@
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
         <div class="container">
             <a asp-area="" asp-action="Index" asp-controller="Home" class="logo">
-                <img src="~/images/logo.png" alt="Ice cream logo" style="max-height: 50px" />
+
+                <img src="~/images/logo.png" alt="Ice cream logo" style="max-height: 75px" />
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
                     aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
+        
             <div class="collapse navbar-collapse" id="navbarColor01">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" asp-action="Index" asp-controller="Home">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-action="Create" asp-controller="DataAnalysis">DataAnalysis</a>
-                    </li>
+                  
 
                     @if (User.IsInRole("User"))
                     {
@@ -55,6 +54,10 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-action="Index" asp-controller="Flavors">Flavors</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="Index" asp-controller="DataAnalysis">Data Analysis</a>
+                        </li>
+                  
                     }
 
                 </ul>

@@ -148,7 +148,7 @@ namespace CloudComputingProject.Controllers
             // Replace this with code that fetches the actual flavors from your database or another data source
             var flavors = _context.Flavors.ToList();
             var products = _context.Products.ToList();
-            // Create a MultiSelectList with the fetched flavors
+            // Index a MultiSelectList with the fetched flavors
 
             ViewBag.Flavors = new MultiSelectList(flavors, "Id", "FlavorName");
             ViewBag.Products = new SelectList(products, "Id", "Name");
@@ -159,11 +159,11 @@ namespace CloudComputingProject.Controllers
 
 
 
-        // POST: OrderItems/Create
+        // POST: OrderItems/Index
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 
-        // Create action method
+        // Index action method
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OrderItem orderItem, List<int> flavors)
@@ -217,10 +217,10 @@ namespace CloudComputingProject.Controllers
             var flavors = _context.Flavors.ToList();
             var products = _context.Products.ToList();
 
-            // Create a MultiSelectList with the fetched flavors
+            // Index a MultiSelectList with the fetched flavors
             ViewBag.Flavors = new MultiSelectList(flavors, "Id", "FlavorName");
 
-            // Create a SelectList with the fetched products
+            // Index a SelectList with the fetched products
             ViewBag.Products = new SelectList(products, "Id", "Name");
 
             // Set the selected values for the product and flavors dropdowns based on the orderItem

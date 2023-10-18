@@ -60,7 +60,7 @@ namespace CloudComputingProject.Controllers
             return View(order);
         }
 
-        // GET: Orders/Create
+        // GET: Orders/Index
         public async Task<IActionResult> Create(decimal? orderTotal)
         {
 
@@ -94,7 +94,7 @@ namespace CloudComputingProject.Controllers
             return View(order);
         }
 
-        // POST: Orders/Create
+        // POST: Orders/Index
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
