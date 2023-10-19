@@ -1,10 +1,12 @@
-﻿// Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-public class HeDateParts
+﻿namespace GatewayApiProject.Models
 {
-	public string y { get; set; }
-	public string m { get; set; }
-	public string d { get; set; }
-}
+    // RootImageResult myDeserializedClass = JsonConvert.DeserializeObject<RootImageResult>(myJsonResponse);
+    public class HeDateParts
+    {
+        public string y { get; set; }
+        public string m { get; set; }
+        public string d { get; set; }
+    }
 
 public class RootDate
 {
