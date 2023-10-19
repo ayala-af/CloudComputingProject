@@ -1,5 +1,5 @@
 ﻿using GatewayApiProject.Models;
-using GatewayApiProject.ModelsOld;
+//using GatewayApiProject.ModelsOld;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
@@ -20,7 +20,7 @@ namespace GatewayApiProject.Controllers
         [HttpGet(Name = "GetAddress")]
         public bool Get(string city, string street)
         {
-            Location location = new Location() { City = city, Street = street};
+            Location location = new() { City = city, Street = street};
             //get address from api call
             var resource_id = "bf185c7f-1a4e-4662-88c5-fa118a244bda";
             var apiEndpoint = $"https://data.gov.il/api/3/action/datastore_search?resource_id={resource_id}&q={location.City}&limit=50000";
