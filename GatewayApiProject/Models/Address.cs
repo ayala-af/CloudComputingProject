@@ -9,7 +9,7 @@
     
 
     //full address from data.gov.il api call
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+    // RootImageResult myDeserializedClass = JsonConvert.DeserializeObject<RootImageResult>(myJsonResponse);
     public class Field
     {
         public string id { get; set; }

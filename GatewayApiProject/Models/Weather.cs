@@ -8,7 +8,7 @@
     }
 
     //full deserialization of openweather api call
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+    // RootImageResult myDeserializedClass = JsonConvert.DeserializeObject<RootImageResult>(myJsonResponse);
     public class Clouds
     {
         public int all { get; set; }
