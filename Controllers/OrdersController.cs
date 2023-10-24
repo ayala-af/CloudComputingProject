@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using System.Net;
 using Microsoft.AspNet.Identity;
+using System.IO;
 
 namespace CloudComputingProject.Controllers
 {
@@ -90,26 +91,26 @@ namespace CloudComputingProject.Controllers
                 // Create an instance of HttpClient
                 using (var httpClient = new HttpClient())
                 {
-                    // Send a GET request to the other project's endpoint
-                    var response = await httpClient.GetAsync(apiUrl);
+                    //// Send a GET request to the other project's endpoint
+                    //var response = await httpClient.GetAsync(apiUrl);
 
-                    // Check if the request was successful
-                    if (response.IsSuccessStatusCode)
-                    {
-                        // Parse the response content as a boolean value
-                        bool isValidAddress = bool.Parse(await response.Content.ReadAsStringAsync());
+                    //// Check if the request was successful
+                    //if (response.IsSuccessStatusCode)
+                    //{
+                    //    // Parse the response content as a boolean value
+                    //    bool isValidAddress = bool.Parse(await response.Content.ReadAsStringAsync());
 
-                        if (isValidAddress)
-                        {
-                            order.City = user.City;
-                            order.Street = user.Street;
-                            order.House = user.HouseNumber ?? 0;
-                        }
-                    }
-                    else
-                    {
-                        //return false;
-                    }
+                    //    if (isValidAddress)
+                    //    {
+                    //        order.City = user.City;
+                    //        order.Street = user.Street;
+                    //        order.House = user.HouseNumber ?? 0;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    //return false;
+                    //}
 
 
 
@@ -132,10 +133,10 @@ namespace CloudComputingProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ClientFirstName,ClientLastName,PhoneNumber,Email,City,Street,House,TotalPrice,UserId")] Order order)
         {
-            bool isvalid = await IsValidAddress(order.City, order.Street, "0");
+            bool isvalidAddress = await IsValidAddress(order.City, order.Street, "0");
 
-			if (ModelState.IsValid && isvalid)
-            {
+			if (ModelState.IsValid) //&& isvalidAddress
+			{
 
                 // Add the order items to the order
                 order.Items = await _context.OrderItems.
@@ -145,8 +146,12 @@ namespace CloudComputingProject.Controllers
                 // Set the order properties
                 order.TotalPrice = order.Items.Sum(p => p.Price);
                 order.OrderDate = DateTime.Now;
-
-                order.OrderDay = DateTime.UtcNow.DayOfWeek;
+				order.IsHoliday = await IsHoliday();
+                Weather weather = await GetWeather(order.City);
+                order.Humidity = weather.humidity;
+                order.Temperature = weather.temp;
+                order.FeelsLike = weather.feels_like;
+				order.OrderDay = DateTime.UtcNow.DayOfWeek;
 
 				
                
@@ -318,5 +323,70 @@ namespace CloudComputingProject.Controllers
 
             return userIdClaim.Value;
         }
-    }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<bool> IsHoliday()
+        {
+			//gateway api call to verify location existence
+			var apiUrl = $"http://www.apigateway.somee.com/HebrewDate/IsHebrewHoliday";
+
+			// Create an instance of HttpClient
+			using (var httpClient = new HttpClient())
+			{
+                    // Send a GET request to the other project's endpoint
+                    var response = await httpClient.GetAsync(apiUrl);
+
+                    // Check if the request was successful
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Parse the response content as a boolean value
+                        bool isHoliday = bool.Parse(await response.Content.ReadAsStringAsync());
+
+                        return isHoliday;
+                    }
+				else
+				{
+					// Throw an exception if the request was not successful
+					throw new Exception($"Failed to fetch data from the API. Status Code: {response.StatusCode}");
+				}
+			}
+		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="location">English location</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+		public async Task<Weather> GetWeather(string location)
+		{
+			//gateway api call to verify location existence
+			var apiUrl = $"http://www.apigateway.somee.com/WeatherForecast?location={location}";
+
+			// Create an instance of HttpClient
+			using (var httpClient = new HttpClient())
+			{
+				// Send a GET request to the other project's endpoint
+				var response = await httpClient.GetAsync(apiUrl);
+
+				// Check if the request was successful
+				if (response.IsSuccessStatusCode)
+				{
+					// Parse the response content as a boolean value
+					var jsonContent = response.Content.ReadAsStringAsync().Result;
+                    var weather = JsonConvert.DeserializeObject<Weather>(jsonContent);
+					return weather;
+				}
+				else
+				{
+					// Throw an exception if the request was not successful
+					throw new Exception($"Failed to fetch data from the API. Status Code: {response.StatusCode}");
+				}
+			}
+		}
+	}
 }
