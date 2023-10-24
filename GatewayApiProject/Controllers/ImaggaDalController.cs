@@ -22,35 +22,44 @@ namespace GatewayApiProject.Controllers
         /// <param name="category">The category to check the image against (optional).</param>
         /// <returns>True if the image matches the category or contains ice cream-related tags; otherwise, false.</returns>
         [HttpGet]
-        public bool Get(string url,string? category)
+        public string Get(string url,string? category)
         {
             var check = new ImaggaResult();
             var result = check.CheckImage(url);
-           if (result != null&&result.status.type=="success" )
+            try
             {
-                if (category != null)
-                {
-                    foreach (var item in result.result.tags)
-                    {
-                        if (item.tag.en.Equals(category))
-                        {
-                            return true;
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (var item in result.result.tags)
-                    {
-                        if (item.tag.en.Equals("ice")||item.tag.en.Equals("cream")||item.tag.en.Equals("ice cream")||item.tag.en.Equals("ice")||item.tag.en.Equals("yogurt"))
-                        {
-                            return true;
-                        }
-                    }
 
+
+                if (result != null&&result.status.type=="success")
+                {
+                    if (category != null)
+                    {
+                        foreach (var item in result.result.tags)
+                        {
+                            if (item.tag.en.Equals(category))
+                            {
+                                return "true";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var item in result.result.tags)
+                        {
+                            if (item.tag.en.Equals("ice")||item.tag.en.Equals("cream")||item.tag.en.Equals("ice cream")||item.tag.en.Equals("ice")||item.tag.en.Equals("yogurt"))
+                            {
+                                return "true";
+                            }
+                        }
+
+                    }
                 }
             }
-           return false;
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+           return "false";
             
         }
     }
