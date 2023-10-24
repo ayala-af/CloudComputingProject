@@ -1,4 +1,5 @@
 ﻿@{
+
     var totalOrders = TempData["TotalOrders"] as int[];
     var productNames = TempData["ProductNames"] as string[];
 
@@ -7,6 +8,11 @@
 
     var flavorName = TempData["FlavorName"] as List<string>;
     var flavorTotalSale = TempData["FlavorTotalSale"] as List<int>;
+    var startDate = TempData["startDate"] as DateTime?;
+    var endDate = TempData["endDate"] as DateTime?;
+
+    var labels = TempData["Flavor1Labels"] as List<string>;
+    var flavorsData =TempData["Flavor1Data"] as List<object>;
 }
 
 
@@ -16,16 +22,17 @@
 </head>
 <body>
     <div>
-        <form action="/DataAnalysis/Index" method="get">
+        <form id="dateForm" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="startDate">תאריך התחלה:</label>
-                <input type="date" name="startDate" />
+                <input type="date" id="startDate" name="startDate" value="@startDate?.Date" />
+
             </div>
             <div class="form-group">
                 <label for="endDate">תאריך סיום:</label>
-                <input type="date" name="endDate" />
+                <input type="date" id="endDate" name="endDate" value="@endDate?.Date" />
             </div>
-            <button type="submit">Submit</button>
+            <button type="submit" id="submitDate">אישור</button>
         </form>
     </div>
     <div style="display:flex;">
@@ -40,19 +47,26 @@
             <canvas id="myChart1"></canvas>
         </div>
     </div>
-
+  
+    <div style="display:flex;">
     <div style="width: 40%; margin: auto;">
         <h1>flavors sales</h1>
         <canvas id="myChart2"></canvas>
     </div>
-
+        <div style="width: 60%; margin: auto;">
+            <h1>flavor sales</h1>
+            <canvas id="chart3"></canvas>
+         </div>
+   </div>
+   <h1 id="1">@startDate</h1>
+    <h1 id="2">@endDate</h1>
     <script>
         // המרת מערכים C# למערכים ב-JavaScript
         var productNames = @Html.Raw(Json.Serialize(productNames));
         var totalOrders = @Html.Raw(Json.Serialize(totalOrders));
         var flavorProductNames = @Html.Raw(Json.Serialize(flavorProductNames));
         var flavorProductCount = @Html.Raw(Json.Serialize(flavorProductCount));
-
+        
 
         var data = {
             labels: productNames,
@@ -67,6 +81,7 @@
             type: 'bar',
             data: data
         });
+
         var myChart1; // המשתנה myChart1 מוגדר מחוץ לפונקציה
         var canvas1 = document.getElementById('myChart1');
         var ctx1 = canvas1.getContext('2d');
@@ -128,6 +143,52 @@
             type: 'polarArea',
             data: data2
         });
-    </script>
 
+        var labels = @Html.Raw(Json.Serialize(labels));
+        var flavorsData = @Html.Raw(Json.Serialize(flavorsData));
+        
+        var chart3;
+        data = {
+            labels: labels,
+            datasets: flavorsData
+        };
+        var canvas3 = document.getElementById('chart3');
+        var ctx3 = document.getElementById('chart3').getContext('2d');
+        var _data = data;
+        chart3 = new Chart(ctx3, {
+            type: 'line',
+            data: _data
+        });
+        canvas2.onclick = (evt) => {
+            const res = chart2.getElementsAtEventForMode(
+                evt,
+                'nearest',
+                { intersect: true },
+                true
+            );
+            // If didn't click on a bar, `res` will be an empty array
+            if (res.length === 0) {
+                return;
+            }
+
+            // Get the index of the clicked bar
+            var clickedPolarAreaIndex = res[0].index;
+            if (chart3.data.datasets[clickedPolarAreaIndex].hidden == true) {
+                chart3.data.datasets[clickedPolarAreaIndex].hidden = false;
+            }
+            else { 
+                chart3.data.datasets[clickedPolarAreaIndex].hidden = true;
+            }
+
+            // // Get the index of the same row in chart3
+            // var chart3Index = flavorsData.findIndex((data) => data.label === flavorProductNames[clickedPolarAreaIndex]);
+
+            // // Hide the chart3 for the clicked index
+            // chart3[chart3Index].hide();
+            chart3.update();
+            
+        };
+
+    </script>
+  
 </body>

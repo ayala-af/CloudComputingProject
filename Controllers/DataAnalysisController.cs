@@ -3,6 +3,8 @@ using CloudComputingProject.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using NuGet.DependencyResolver;
 using System.Linq;
 
 namespace CloudComputingProject.Controllers
@@ -17,13 +19,16 @@ namespace CloudComputingProject.Controllers
 
 
         }
-     
+
         public ActionResult Index(DateTime? startDate, DateTime? endDate)
         {
             try
             {
                 TempData["startDate"] = startDate;
                 TempData["endDate"] = endDate;
+                var orderItems = _context.OrderItems;
+                List<object> data = new List<object>();
+                List<string> labels = new List<string>();
                 List<Order> orders;
                 if (startDate != null && endDate != null)
                 {
@@ -34,8 +39,11 @@ namespace CloudComputingProject.Controllers
                 else
                 {
                     orders = _context.Orders.ToList();
+                    var ordersByDate = orders.OrderBy(order => order.OrderDate).ToList();
+                    startDate=ordersByDate[0].OrderDate;
+                    endDate=ordersByDate[ordersByDate.Count - 1].OrderDate;
                 }
-                var orderItems = _context.OrderItems;
+
                 var productOrders = orders
                     .SelectMany(order => orderItems.Where(orderItem => orderItem.OrderId == order.Id))
                     .GroupBy(item => item.ProductId)
@@ -62,23 +70,47 @@ namespace CloudComputingProject.Controllers
                                 FlavorCount = group.Count() // כמות הטעמים של אותו השם
                             }).ToArray()
                             ).ToArray();
-                var flavorProductNames = productFlavors.Select(fo => fo.Select(f => _context.Flavors.Where(f1=>f1.Id.ToString()==f.FlavorId).First().FlavorName).ToArray()).ToList();
+                var flavorProductNames = productFlavors.Select(fo => fo.Select(f => _context.Flavors.Where(f1 => f1.Id.ToString()==f.FlavorId).First().FlavorName).ToArray()).ToList();
                 var flavorProductCount = productFlavors.Select(fo => fo.Select(f => f.FlavorCount).ToArray()).ToList();
                 TempData["FlavorProductNames"] = flavorProductNames;
                 TempData["FlavorProductCount"] = flavorProductCount;
 
                 var leagalOrderItems = orders.SelectMany(order => orderItems.Where(orderItem => orderItem.OrderId == order.Id)).ToList();
-                List<string> FlavorName=new List<string>();
-                List<int> FlavorTotalSale=new List<int>();
+                List<string> FlavorName = new List<string>();
+                List<int> FlavorTotalSale = new List<int>();
                 foreach (Flavor flavor in _context.Flavors)
                 {
                     FlavorName.Add(flavor.FlavorName);
-                    FlavorTotalSale.Add(leagalOrderItems.Sum(orderItem => orderItem.Flavors.Split(",").Count(f=>f==(flavor.Id.ToString()))));
+                    FlavorTotalSale.Add(leagalOrderItems.Sum(orderItem => orderItem.Flavors.Split(",").Count(f => f==(flavor.Id.ToString()))));
 
                 }
                 TempData["FlavorName"] = FlavorName;
                 TempData["FlavorTotalSale"] = FlavorTotalSale;
 
+
+                while (startDate <= endDate)
+                {
+                    labels.Add(startDate?.ToString("MMMM/yyyy"));
+                    startDate = startDate?.AddMonths(1);
+                }
+                var legalOrderItems = orders.Select(order => orderItems.Where(orderItem => orderItem.OrderId == order.Id).ToList());
+
+                var legalFlavors = legalOrderItems.Select(orderItemList => orderItemList.SelectMany(item => item.Flavors.Split(",").Select(f => new { FlavorId = f, Date = orders.Find(order => order.Id==item.OrderId).OrderDate })));
+                var flavorsOnSale = legalFlavors.SelectMany(x => x).ToList();//.GroupBy(f => f.FlavorId);
+                                                                             // var f = flavorsOnSale.Select(group => new { label = _context.Flavors.FirstOrDefault(flavor => flavor.Id.ToString()==group.Key).FlavorName, data = labels.Select(lab => group.Where(item => item.Date.ToString("MMMM/yyyy")==lab).Count()), hidden = true }as object).ToList();//group.GroupBy(item => item.Date.ToString("MMMM/yyyy")).Select(group1 => group1.Count()).ToList() }).ToList();
+                List<object> fl = new List<object>();
+                foreach (Flavor flavor in _context.Flavors)
+                {
+                    fl.Add(new
+                    {
+                        label = flavor.FlavorName,
+                        data = labels.Select(lab => flavorsOnSale.Where(f1 => f1.FlavorId==flavor.Id.ToString()).Where(item => item.Date.ToString("MMMM/yyyy")==lab).Count()),
+                        hidden = true
+                    } as object);
+                }
+
+                TempData["Flavor1Labels"] = labels;
+                TempData["Flavor1Data"] = fl;
                 return View();
             }
             catch (Exception ex)
@@ -92,6 +124,6 @@ namespace CloudComputingProject.Controllers
             return _context.Products.FirstOrDefault(p => p.Id == productId)?.Name;
         }
 
-
     }
+
 }
