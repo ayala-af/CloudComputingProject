@@ -13,6 +13,8 @@ using Firebase.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
+using System.Net;
+using Microsoft.AspNet.Identity;
 
 namespace CloudComputingProject.Controllers
 {
@@ -67,7 +69,7 @@ namespace CloudComputingProject.Controllers
             string userId = GetUserId();
             var items = await _context.OrderItems.Where(item => item.UserId == userId && item.OrderId == 0).ToListAsync();
 
-            Order order = new Order();
+            Order order = new();
             //order.TotalPrice = orderItems.Sum(p => p.Price);
             //order.OrderDate = DateTime.UtcNow;
             order.UserId = userId;
@@ -75,24 +77,53 @@ namespace CloudComputingProject.Controllers
             //order.Items = orderItems;
             var user = await _userManager.FindByIdAsync(userId);
 
+
             // צרוך את המידע מהמשתמש והמודל שלו כמו שעשית בטופס
             order.ClientFirstName = user.FirstName;
             order.ClientLastName = user.LastName;
             order.PhoneNumber = user.PhoneNumber;
             order.Email = user.Email;
-            order.City = user.City;
-            order.Street = user.Street;
-            order.House = user.HouseNumber??0;
-            
 
-            ViewBag.OrderItems = items;
-            ViewBag.products = await _context.Products.ToListAsync();
-            ViewBag.Flavors = await _context.Flavors.ToListAsync();
-            TempData["Price"] = items.Sum(item => item.Price);
-            TempData["IsPayed"] = false;
-            TempData["OrderItems"]=items;
-            return View(order);
-        }
+            //gateway api call to verify location existence
+            var apiUrl = $"http://www.apigateway.somee.com/Address?city={user.City}&street={user.Street}";
+            
+                // Create an instance of HttpClient
+                using (var httpClient = new HttpClient())
+                {
+                    // Send a GET request to the other project's endpoint
+                    var response = await httpClient.GetAsync(apiUrl);
+
+                    // Check if the request was successful
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Parse the response content as a boolean value
+                        bool isValidAddress = bool.Parse(await response.Content.ReadAsStringAsync());
+
+                        if (isValidAddress)
+                        {
+                            order.City = user.City;
+                            order.Street = user.Street;
+                            order.House = user.HouseNumber ?? 0;
+                        }
+                    }
+                    else
+                    {
+                        //return false;
+                    }
+
+
+
+
+                    ViewBag.OrderItems = items;
+                    ViewBag.products = await _context.Products.ToListAsync();
+                    ViewBag.Flavors = await _context.Flavors.ToListAsync();
+                    TempData["Price"] = items.Sum(item => item.Price);
+                    TempData["IsPayed"] = false;
+                    TempData["OrderItems"] = items;
+                    return View(order);
+                }
+            
+            }
 
         // POST: Orders/Index
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -101,7 +132,9 @@ namespace CloudComputingProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ClientFirstName,ClientLastName,PhoneNumber,Email,City,Street,House,TotalPrice,UserId")] Order order)
         {
-            if (ModelState.IsValid)
+            bool isvalid = await IsValidAddress(order.City, order.Street, "0");
+
+			if (ModelState.IsValid && isvalid)
             {
 
                 // Add the order items to the order
@@ -115,8 +148,11 @@ namespace CloudComputingProject.Controllers
 
                 order.OrderDay = DateTime.UtcNow.DayOfWeek;
 
-                // Add the order to the database
-                _context.Add(order);
+				
+               
+
+					// Add the order to the database
+					_context.Add(order);
                 //foreach(var item in _context.OrderItems)
                 //{
                 //    if(item.UserId == GetUserId())
@@ -155,6 +191,28 @@ namespace CloudComputingProject.Controllers
 
         }
 
+        public async Task<bool> IsValidAddress(string city, string street, string? num)
+        {
+			//gateway api call to verify location existence
+			var apiUrl = $"http://www.apigateway.somee.com/Address?city={city}&street={street}";
+
+			// Create an instance of HttpClient
+			using (var httpClient = new HttpClient())
+			{
+				// Send a GET request to the other project's endpoint
+				var response = await httpClient.GetAsync(apiUrl);
+
+                // Check if the request was successful
+                if (response.IsSuccessStatusCode)
+                {
+                    // Parse the response content as a boolean value
+                    bool isValidAddress = bool.Parse(await response.Content.ReadAsStringAsync());
+
+                    return isValidAddress;
+                }
+                return false;
+			}
+		}
 
         // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)

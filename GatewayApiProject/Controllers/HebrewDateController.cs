@@ -58,16 +58,20 @@ namespace GatewayApiProject.Controllers
 				// Check if there is a holiday in the week
 				bool isHoliday = data["items"].Any(item =>
 				(string)item["category"] == "holiday" &&
-				(string)item["title"] != "Parashat" &&
-				(string)item["title"] != "Shabbat" &&
-				(string)item["title"] != "Rosh Chodesh");
+				!((string)item["title"]).StartsWith("Parashat") &&
+				!((string)item["title"]).StartsWith("Shabbat") &&
+				!((string)item["title"]).StartsWith("Yom HaAliyah") &&
+				!((string)item["title"]).StartsWith("Rosh Chodesh") &&
+				!((string)item["title"]).EndsWith("Memorial Day"));
 
-				//possibility of registering the holiday name
+				////possibility of registering the holiday name
 				//var holidayItem = data["items"].FirstOrDefault(item =>
 				//(string)item["category"] == "holiday" &&
 				//!((string)item["title"]).StartsWith("Parashat") &&
 				//!((string)item["title"]).StartsWith("Shabbat") &&
-				//!((string)item["title"]).StartsWith("Rosh Chodesh"));
+				//!((string)item["title"]).StartsWith("Yom HaAliyah") &&
+				//!((string)item["title"]).StartsWith("Rosh Chodesh") &&
+				//!((string)item["title"]).EndsWith("Memorial Day"));
 				//if (holidayItem != null)
 				//{
 				//	var j = $"Holiday found: {holidayItem["title"]}";

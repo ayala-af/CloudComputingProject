@@ -33,7 +33,7 @@
             <div class="checkout-button">
                 <h3>Total Price:</h3>
                 <h3>$@Model.Sum(item => (ViewData["Products"] as List<Product>)?.FirstOrDefault(p => p.Id == item.ProductId)?.Price ?? 0).ToString("0.00")</h3>
-                <a href="@Url.Action("Index","Orders", new { orderTotal = Model.Sum(item => (ViewData["Products"] as List<Product>)?.FirstOrDefault(p => p.Id == item.ProductId)?.Price ?? 0) })" class="btn btn-success">Checkout</a>
+                <a href="@Url.Action("Create","Orders", new { orderTotal = Model.Sum(item => (ViewData["Products"] as List<Product>)?.FirstOrDefault(p => p.Id == item.ProductId)?.Price ?? 0) })" class="btn btn-success">Checkout</a>
             </div>
         }
         else
