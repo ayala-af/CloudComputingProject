@@ -10,6 +10,7 @@ using CloudComputingProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Firebase.Auth;
 using Firebase.Storage;
+using System.Net;
 
 namespace CloudComputingProject.Controllers
 {
@@ -105,9 +106,36 @@ namespace CloudComputingProject.Controllers
                                 .Child(storagePath)
                                 .PutAsync(stream);
 
+							using (var httpClient = new HttpClient())
+							{
+                                var tempImage = "https://firebasestorage.googleapis.com/v0/b/cloudcomputingproject-81c00.appspot.com/o/images%2Fyum.jpg?alt=media&token=48bb6479-1d9c-4cf4-b2b7-f80a90043bea&_gl=1*bsk8ea*_ga*MTkzMTY4ODU4Ni4xNjk1OTE3MTY0*_ga_CW55HF8NVT*MTY5ODE2OTU5Mi45LjEuMTY5ODE2OTcxMC4xMi4wLjA.";
+								var apiUrl = $"http://www.apigateway.somee.com/api/ImaggaDal?url={tempImage}&category={null}";
+								var response = await httpClient.GetAsync(apiUrl);
 
-                            flavor.FlavorUrl = task;
-                            // downloadUrl כאן יכיל את ה-URL לתמונה שהועלתה
+								if (response.IsSuccessStatusCode)
+								{
+									var responseContent = await response.Content.ReadAsStringAsync();
+									// Handle the response content here.
+									if (responseContent == "true")
+									{
+										TempData["isImageConfirm"] = true;
+										flavor.FlavorUrl = task;
+									}
+									else
+										TempData["isImageConfirm"] = false;
+									// downloadUrl כאן יכיל את ה-URL לתמונה שהועלתה
+								}
+								else
+								{
+									// Handle the case when the request is not successful.
+									// You can check the response status code and take appropriate action.
+								}
+							}
+							//gateway api call
+							
+                            //var responseJson = new WebClient().DownloadString(apiUrl);
+
+                            
                         }
                         _context.Add(flavor);
                         await _context.SaveChangesAsync();
