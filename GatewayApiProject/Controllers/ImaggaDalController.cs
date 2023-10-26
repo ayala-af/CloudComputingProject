@@ -9,8 +9,8 @@ namespace GatewayApiProject.Controllers
     /// <summary>
     /// Controller responsible for interacting with the Imagga API to analyze images and check if they match specific categories.
     /// </summary>
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class ImaggaDalController : ControllerBase
     {
         // GET: api/<ImaggaController>
@@ -25,7 +25,8 @@ namespace GatewayApiProject.Controllers
         public string Get(string url,string? category)
         {
             var check = new ImaggaResult();
-            var result = check.CheckImage(url);
+            var snndUrl = url;
+            var result = check.CheckImage(snndUrl);
             try
             {
 

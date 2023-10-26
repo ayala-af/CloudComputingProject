@@ -88,7 +88,8 @@ namespace GatewayApiProject.Models
                 var client = new RestClient("https://api.imagga.com/v2/tags");
 
                 var request = new RestRequest();
-                request.AddParameter("image_url", imageUrl);
+                var send = imageUrl;
+                request.AddParameter("image_url", send);
                 request.AddHeader("Authorization", String.Format("Basic {0}", basicAuthValue));
 
                 RestResponse response = client.Execute(request);
