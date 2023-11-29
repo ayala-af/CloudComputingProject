@@ -1,7 +1,7 @@
 ﻿@model CloudComputingProject.Models.Product
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Add Product";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var categories = Enum.GetValues(typeof(CloudComputingProject.Models.Category))
@@ -12,11 +12,7 @@
                                      Value = ((int)c).ToString()
                                  })
                          .ToList();
-}<a href="c:\users\ayala\source\repos\cloudcomputingproject\views\products\create.cshtml">c:\users\ayala\source\repos\cloudcomputingproject\views\products\create.cshtml</a>
-<h1>Create</h1>
-
-<h4>Product</h4>
-<hr />
+}
 <div class="row">
 
 
