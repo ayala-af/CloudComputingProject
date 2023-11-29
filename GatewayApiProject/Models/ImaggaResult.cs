@@ -78,6 +78,8 @@ namespace GatewayApiProject.Models
         /// <returns>Immaga (Json) response as deserialized object</returns>
         public RootImageResult  CheckImage(string imageUrl)
             {
+            try
+            {
                 string apiKey = "acc_400d45350deded3";
                 string apiSecret = "504cbaae38a9e6fc064acc80abd37e3d";
 
@@ -85,15 +87,22 @@ namespace GatewayApiProject.Models
 
                 var client = new RestClient("https://api.imagga.com/v2/tags");
 
-            var request = new RestRequest();
-                request.AddParameter("image_url", imageUrl);
+                var request = new RestRequest();
+                var send = imageUrl;
+                request.AddParameter("image_url", send);
                 request.AddHeader("Authorization", String.Format("Basic {0}", basicAuthValue));
 
-            RestResponse response = client.Execute(request);
-            RootImageResult DeserializedRootImaggaResult = JsonConvert.DeserializeObject<RootImageResult>(response.Content);
+                RestResponse response = client.Execute(request);
+                RootImageResult DeserializedRootImaggaResult = JsonConvert.DeserializeObject<RootImageResult>(response.Content);
 
-            return DeserializedRootImaggaResult;
+                return DeserializedRootImaggaResult;
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
         }
 
     
