@@ -54,11 +54,12 @@ namespace CloudComputingProject.Controllers
                         Flavors = group.Select(orderItem => orderItem.Flavors).ToArray()
                     })
                     .ToList();
-                var productIds = productOrders.Select(po => po.ProductId).ToArray();
-                var totalOrders = productOrders.Select(po => po.TotalOrders).ToArray();
-                var productNames = productIds.Select(productId => GetProductName(productId)).ToArray();
-                TempData["TotalOrders"] = totalOrders;
-                TempData["ProductNames"] = productNames;
+                // var productIds = productOrders.Select(po => po.ProductId).ToArray();
+                // var totalOrders = productOrders.Select(po => po.TotalOrders).ToArray();
+                // var productNames = productIds.Select(productId => GetProductName(productId)).ToArray();
+                TempData["TotalOrders"] = GetTotalOrders(orders);
+                TempData["ProductNames"] = GetGetProductsNames();
+
 
 
                 var productFlavors = productOrders
@@ -118,11 +119,32 @@ namespace CloudComputingProject.Controllers
                 return View("Error");
             }
         }
-
-        private string GetProductName(int productId)
+        //מחזיר את  הטוטאלי של המכירות. גרף 1
+        private int[] GetTotalOrders(List<Order> orders)
         {
-            return _context.Products.FirstOrDefault(p => p.Id == productId)?.Name;
+            var productOrders = orders
+    .SelectMany(order => _context.OrderItems.Where(orderItem => orderItem.OrderId == order.Id))
+    .GroupBy(item => item.ProductId)
+    .Select(group => new
+    {
+        ProductId = group.Key,
+        TotalOrders = group.Count()
+    })
+    .ToList();
+
+            var productIds = _context.Products.Select(product => product.Id).ToList();
+            int[] totalOrders = productIds.Select(productId => productOrders.FirstOrDefault(productOrder => productOrder.ProductId==productId)?.TotalOrders??0).ToArray();
+            return totalOrders;
+            //if totalordes!=null
+
         }
+        private string[] GetGetProductsNames()
+        {
+            var products = _context.Products;
+            var productIds = _context.Products.Select(product => product.Id).ToList();
+            return productIds.Select(productId => products.FirstOrDefault(product => product.Id==productId)?.Name??" ").ToArray();
+        }
+
 
     }
 

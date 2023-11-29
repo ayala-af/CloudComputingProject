@@ -34,6 +34,8 @@
             </div>
             <button type="submit" id="submitDate">Show graphs</button>
         </form>
+        <h1 id="1">@startDate</h1>
+        <h1 id="2">@endDate</h1>
     </div>
     <div style="display:flex;">
         <div style="width: 60%; margin: auto;">
@@ -58,8 +60,7 @@
             <canvas id="chart3"></canvas>
          </div>
    </div>
-   <h1 id="1">@startDate</h1>
-    <h1 id="2">@endDate</h1>
+ 
     <script>
         // המרת מערכים C# למערכים ב-JavaScript
         var productNames = @Html.Raw(Json.Serialize(productNames));
