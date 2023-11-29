@@ -1,4 +1,5 @@
 ﻿
+
 /* customizable snowflake styling */
 .snowflake {
 	color: #fff;
@@ -168,11 +169,20 @@
  */
 /*      light colors - used for select dropdown         */
 /*           Font Smoothing      */
+
+@import url(https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap);
 h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6, p, .navbar, .brand, a, .td-name, td, button, input, select, textarea {
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
-	font-family: "Montserrat", "Helvetica", Arial, sans-serif;
-	font-weight: 300;
+	--bs-font-sans-serif: Nunito,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+	--bs-font-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+	--bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+	--bs-body-font-family: var(--bs-font-sans-serif);
+	--bs-body-font-size: 1rem;
+	--bs-body-font-weight: 400;
+	--bs-body-line-height: 1.5;
+
+
 }
 
 h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
@@ -355,9 +365,13 @@ blockquote small {
 /*     General overwrite     */
 body {
 	color: #66615b;
-	font-size: 14px;
-	font-weight: 300;
-	font-family: 'Montserrat', "Helvetica", Arial, sans-serif;
+	//font-size: 14px;
+	//font-weight: 300;
+	
+	font-family: var(--bs-body-font-family);
+	font-size: var(--bs-body-font-size);
+	font-weight: var(--bs-body-font-weight);
+	line-height: var(--bs-body-line-height);
 }
 
 a {
@@ -475,7 +489,8 @@ input[type="file"] > input[type="button"]::-moz-focus-inner {
 }
 
 .bg-primary {
-	background-color: #6dd3d6 !important;
+	background-color: #50b3af !important;
+	
 }
 
 .bg-info {
@@ -507,7 +522,7 @@ input[type="file"] > input[type="button"]::-moz-focus-inner {
 	padding: 0.5rem 18px;
 	line-height: 1.75;
 	cursor: pointer;
-	text-transform: uppercase;
+	//text-transform: uppercase;
 	background-color: #66615B;
 	border-color: #66615B;
 	color: #FFFFFF;
@@ -2352,7 +2367,7 @@ textarea.form-control {
 		padding: 20px 15px;
 		font-size: 14px;
 		color: #66615B;
-		text-transform: uppercase;
+		//text-transform: uppercase;
 	}
 
 	.navbar .nav-link i {
@@ -2369,7 +2384,7 @@ textarea.form-control {
 	.navbar .nav-link p {
 		margin: 0px 0px;
 		color: #9A9A9A !important;
-		text-transform: uppercase;
+		//text-transform: uppercase;
 		font-weight: 600;
 		font-size: 12px;
 		line-height: 1.5em;
@@ -2381,15 +2396,23 @@ textarea.form-control {
 		}
 
 	.navbar .navbar-nav .nav-item .nav-link {
+		--bs-navbar-padding-x: 0;
+		--bs-navbar-padding-y: 0.5rem;
 		line-height: 1.6;
 		margin: 15px 0px;
-		padding: 10px 15px;
+	
 		opacity: .8;
-		font-size: 12px;
-		text-transform: uppercase;
+		font-size: 25px;
+		position: relative;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.5p 0 ;
 		font-weight: 600;
 		color: #66615B;
 	}
+	
 
 		.navbar .navbar-nav .nav-item .nav-link.btn {
 			margin: 15px 3px;
@@ -3081,7 +3104,7 @@ textarea.form-control {
 			line-height: 1.6;
 			opacity: .8;
 			font-size: 12px;
-			text-transform: uppercase;
+		//	text-transform: uppercase;
 			font-weight: 600;
 		}
 
@@ -3145,7 +3168,7 @@ textarea.form-control {
 				}
 
 			.footer .links ul.uppercase-links {
-				text-transform: uppercase;
+				//text-transform: uppercase;
 			}
 
 			.footer .links ul.stacked-links {
@@ -4472,7 +4495,7 @@ textarea.form-control {
 
 	.nav-text > li > a {
 		font-size: 0.9em;
-		text-transform: uppercase;
+		//text-transform: uppercase;
 		padding: 3px 0;
 		text-align: left;
 		font-weight: 500;
@@ -5324,19 +5347,32 @@ textarea.form-control {
 	}
 
 		.projects-1 .project-pills .nav.nav-pills .nav-item:first-child .nav-link {
-			border-radius: 12px 12px 0 0 !important;
+			border-radius: 12px 12px 0 0 ;
 			margin-left: -1px;
 		}
 
 		.projects-1 .project-pills .nav.nav-pills .nav-item.active:first-child .nav-link {
-			border-radius: 12px 12px 0 0 !important;
+			border-radius: 12px 12px 0 0 ;
 			margin-left: -1px;
 		}
 
 		.projects-1 .project-pills .nav.nav-pills .nav-item:last-child .nav-link {
-			border-radius: 0 0 12px 12px !important;
+			border-radius: 0 0 12px 12px ;
 			margin-left: -1px;
 		}
+	.nav-tabs .nav-item:first-child .nav-link {
+		border-top-left-radius: .375rem !important;
+		border-bottom-left-radius: .375rem !important
+	}
+
+	.nav-tabs .nav-item:last-child .nav-link {
+		border-top-right-radius: .375rem !important;
+		border-bottom-right-radius: .375rem !important
+	}
+
+	.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+		box-shadow: inset 0 3px 6px rgba(0,0,0,.2)
+	}
 
 	.testimonials-2 .testimonials-people img,
 	.section-testimonials .testimonials-people img {
@@ -5472,7 +5508,7 @@ textarea.form-control {
 		.navbar-collapse .navbar-nav > .nav-item > .nav-link {
 			margin: 0px 0px;
 			color: #9A9A9A !important;
-			text-transform: uppercase;
+			//text-transform: uppercase;
 			font-weight: 600;
 			font-size: 12px;
 			line-height: 1.5em;
@@ -6077,7 +6113,7 @@ textarea.form-control {
 			text-align: center;
 			border-bottom: 1px solid #E3E3E3;
 			font-size: 12px;
-			text-transform: uppercase;
+			//text-transform: uppercase;
 			color: #9A9A9A;
 			font-weight: 400;
 			padding-bottom: 5px;

@@ -97,7 +97,7 @@ section{
 }
 
 .header .navbar a{
-    font-size: 2rem;
+    font-size: 20px;
     margin-left: 2.8rem;
     color: var(--black);
 }
