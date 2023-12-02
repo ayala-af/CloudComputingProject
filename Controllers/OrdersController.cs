@@ -11,7 +11,6 @@ using System.Security.Claims;
 using Newtonsoft.Json.Linq;
 using Firebase.Auth;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using System.Net;
 using Microsoft.AspNet.Identity;
@@ -85,44 +84,44 @@ namespace CloudComputingProject.Controllers
             order.PhoneNumber = user.PhoneNumber;
             order.Email = user.Email;
 
-            //gateway api call to verify location existence
-            var apiUrl = $"http://www.apigateway.somee.com/Address?city={user.City}&street={user.Street}";
+            ////gateway api call to verify location existence
+            //var apiUrl = $"http://www.apigateway.somee.com/Address?city={user.City}&street={user.Street}";
             
-                // Create an instance of HttpClient
-                using (var httpClient = new HttpClient())
-                {
-                    //// Send a GET request to the other project's endpoint
-                    //var response = await httpClient.GetAsync(apiUrl);
+            //    // Create an instance of HttpClient
+            //    using (var httpClient = new HttpClient())
+                //{
+            //        // Send a GET request to the other project's endpoint
+            //        var response = await httpClient.GetAsync(apiUrl);
 
-                    //// Check if the request was successful
-                    //if (response.IsSuccessStatusCode)
-                    //{
-                    //    // Parse the response content as a boolean value
-                    //    bool isValidAddress = bool.Parse(await response.Content.ReadAsStringAsync());
+            //        // Check if the request was successful
+            //        if (response.IsSuccessStatusCode)
+            //        {
+            //            // Parse the response content as a boolean value
+            //            bool isValidAddress = bool.Parse(await response.Content.ReadAsStringAsync());
 
-                    //    if (isValidAddress)
-                    //    {
-                    //        order.City = user.City;
-                    //        order.Street = user.Street;
-                    //        order.House = user.HouseNumber ?? 0;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    //return false;
-                    //}
-
-
+            //            if (isValidAddress)
+            //            {
+            //                order.City = user.City;
+            //                order.Street = user.Street;
+            //                order.House = user.HouseNumber ?? 0;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            //
+            //        }
 
 
-                    ViewBag.OrderItems = items;
+
+
+                ViewBag.OrderItems = items;
                     ViewBag.products = await _context.Products.ToListAsync();
                     ViewBag.Flavors = await _context.Flavors.ToListAsync();
                     TempData["Price"] = items.Sum(item => item.Price);
                     TempData["IsPayed"] = false;
                     TempData["OrderItems"] = items;
                     return View(order);
-                }
+                
             
             }
 
@@ -135,7 +134,7 @@ namespace CloudComputingProject.Controllers
         {
             bool isvalidAddress = await IsValidAddress(order.City, order.Street, "0");
 
-			if (ModelState.IsValid) //&& isvalidAddress
+			if (ModelState.IsValid && isvalidAddress)
 			{
 
                 // Add the order items to the order
@@ -171,11 +170,11 @@ namespace CloudComputingProject.Controllers
                 }
                 await _context.SaveChangesAsync();
               
-            var emailSender = new emailsender();
-            emailSender.SendEmail(User.FindFirst(ClaimTypes.Email).ToString(), "Order Confirmation","Thank you for your order");
+                var emailSender = new emailsender();
+                emailSender.SendEmail(User.FindFirst(ClaimTypes.Email).ToString(), "Order Confirmation","Thank you for your order");
 
-            // Redirect to the index page
-            return RedirectToAction(nameof(Details), new { Id = order.Id });
+                // Redirect to the index page
+                return RedirectToAction(nameof(Details), new { Id = order.Id });
             }
 
             string userId = GetUserId();
