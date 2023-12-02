@@ -110,7 +110,7 @@ namespace CloudComputingProject.Controllers
 							using (var httpClient = new HttpClient())
 							{
                                 string doubleEncodedURL = WebUtility.UrlEncode(task);
-                                var apiUrl = @$"http://localhost:5258/ImaggaDal?url={doubleEncodedURL}&category={null}";
+                                var apiUrl = @$"http://www.apigateway.somee.com/ImaggaDal?url={doubleEncodedURL}&category={null}";
 								var response = await httpClient.GetAsync(apiUrl);
 
 								if (response.IsSuccessStatusCode)
