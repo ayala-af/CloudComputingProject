@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Add Flavor";
     Layout = "~/Views/Shared/_Layout.cshtml";
-  
 }
 
 <div class="row">
@@ -25,16 +24,30 @@
                     <input class="form-check-input" asp-for="IsAvailable" /> @Html.DisplayNameFor(model => model.IsAvailable)
                 </label>
             </div>
-            <div class="form-group">
-                <label asp-for="FlavorUrl" class="control-label">Product Picture</label>
-                <input type="file" name="imageFile" class="form-control-file" id="imageInput" />
+            <div class="form-group d-flex align-items-center">
+                <label asp-for="FlavorUrl" class="control-label mr-3">Product Picture</label>
+                <div class="input-group">
+                    <input type="file" name="imageFile" class="form-control-file" id="imageInput" />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-info" id="checkImageButton">Check Image</button>
+                    </div>
+                </div>
                 <span asp-validation-for="FlavorUrl" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <img id="imagePreview" src="#" alt="Product Image" style="max-width: 100%; max-height: 300px;" />
             </div>
+
+            <div class="form-group" id="loadingSpinner" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <span class="ml-2">Validating Image...</span>
+            </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" id="createButton" style="display: none;" />
             </div>
         </form>
     </div>
@@ -43,25 +56,81 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-<script>
-    function previewImage() {
-        var input = document.getElementById('imageInput');
-        var preview = document.getElementById('imagePreview');
 
-        input.addEventListener('change', function () {
-            var file = input.files[0];
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                preview.src = e.target.result;
-            };
-
-            reader.readAsDataURL(file);
-        });
-    }
-
-    previewImage(); // קריאה לפונקציה בטעינת הדף כדי לאפשר הצגת התמונה הברירת מחדל
-</script>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Check for error message in TempData and display it using JavaScript alert
+        var errorMessage = '@TempData["ErrorMessage"]';
+        if (errorMessage !== '') {
+            alert(errorMessage);
+        }
+    
+        function showLoadingSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('checkImageButton').disabled = true;
+        }
+
+        function hideLoadingSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('checkImageButton').disabled = false;
+        }
+
+        function previewImage() {
+            var input = document.getElementById('imageInput');
+            var preview = document.getElementById('imagePreview');
+
+            input.addEventListener('change', function () {
+                var file = input.files[0];
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        previewImage();
+
+        // Function to show a confirmation popup
+        function showConfirmationPopup() {
+            var confirmed = confirm("Are you sure it is the correct image?");
+            if (confirmed) {
+                document.getElementById('createButton').style.display = 'block';
+            }
+        }
+
+        // Function to check the image
+        document.getElementById('checkImageButton').addEventListener('click', function () {
+            showLoadingSpinner();
+
+            var input = document.getElementById('imageInput');
+            var file = input.files[0];
+            var formData = new FormData();
+            formData.append('imageFile', file);
+
+            fetch('/Flavors/CheckImage', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.isImageConfirmed) {
+                    document.getElementById('createButton').style.display = 'block';
+                } else {
+                    document.getElementById('createButton').style.display = 'none';
+                    showConfirmationPopup();
+                }
+                hideLoadingSpinner();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                hideLoadingSpinner();
+            });
+        });
+    </script>
 }

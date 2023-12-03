@@ -21,7 +21,7 @@ namespace CloudComputingProject.Controllers
     /// </summary>
     /// 
 
-   // [Authorize(Roles = "Admin")]
+    // [Authorize(Roles = "Admin")]
     public class FlavorsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -31,7 +31,8 @@ namespace CloudComputingProject.Controllers
         private static string Bucket = "cloudcomputingproject-81c00.appspot.com";
         private static string AuthEmail = "ayalaaftergut@gmail.com";
         private static string AuthPassword = "15251015";
-        public FlavorsController(ApplicationDbContext context,IWebHostEnvironment env)
+        private static string ImageUrl = "";
+        public FlavorsController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
             _env = env;
@@ -70,6 +71,80 @@ namespace CloudComputingProject.Controllers
             ViewBag.Categories = GetCategories();
             return View();
         }
+        [HttpPost]
+        public async Task<IActionResult> CheckImage(IFormFile imageFile)
+        {
+            if (await CheckImageAsync(imageFile))
+            {
+                return Json(new { isImageConfirmed = true });
+            }
+            else
+            {
+                return Json(new { isImageConfirmed = false });
+            }
+        }
+        private async Task<bool> CheckImageAsync(IFormFile imageFile)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Please select an image file.";
+                return false;
+            }
+
+            var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+            var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+            FirebaseStorage firebaseStorage = new FirebaseStorage(
+                Bucket,
+                new FirebaseStorageOptions
+                {
+                    AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                    ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
+                });
+
+            // Define the path where you want to store the file in Firebase Storage
+            string storagePath = "images/" + imageFile.FileName;
+
+            try
+            {
+                using (var stream = imageFile.OpenReadStream())
+                {
+                    var task = await firebaseStorage
+                        .Child(storagePath)
+                        .PutAsync(stream);
+                    ImageUrl = task;
+
+                    using (var httpClient = new HttpClient())
+                    {
+                        string doubleEncodedURL = WebUtility.UrlEncode(task);
+                        var apiUrl = @$"http://www.apigateway.somee.com/ImaggaDal?url={doubleEncodedURL}&category={null}";
+                        var response = await httpClient.GetAsync(apiUrl);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var responseContent = await response.Content.ReadAsStringAsync();
+                            // Handle the response content here.
+                            if (responseContent == "true")
+                            {
+                                TempData["isImageConfirm"] = true;
+                                return true;
+                            }
+                            else
+                            {
+                                TempData["ConfirmationMessage"] = "Are you sure it is the correct image?";
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Image validation failed. Please try a different image.");
+            }
+
+            return false;
+        }
 
         // POST: Flavors/Index
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -80,75 +155,72 @@ namespace CloudComputingProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Check if an image file was uploaded
-                if ((imageFile != null && imageFile.Length > 0))
-                {
-                    var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
-                    var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+                //         // Check if an image file was uploaded
+                //         if ((imageFile != null && imageFile.Length > 0))
+                //         {
+                //             var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                //             var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
 
-                    FirebaseStorage firebaseStorage = new FirebaseStorage(
-                    Bucket,
-                    new FirebaseStorageOptions
-                    {
-                        AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
-                        ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
-                    });
+                //             FirebaseStorage firebaseStorage = new FirebaseStorage(
+                //             Bucket,
+                //             new FirebaseStorageOptions
+                //             {
+                //                 AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                //                 ThrowOnCancel = true // when you cancel the upload, exception is thrown. By default no exception is thrown
+                //             });
 
 
-                    // Define the path where you want to store the file in Firebase Storage
-                    string storagePath = "images/" + imageFile.FileName;
+                //             // Define the path where you want to store the file in Firebase Storage
+                //             string storagePath = "images/" + imageFile.FileName;
 
-                    // Upload the file to Firebase Storage
-                    try
-                    {
-                        using (var stream = imageFile.OpenReadStream())
-                        {
-                            var task = await firebaseStorage
-                                .Child(storagePath)
-                                .PutAsync(stream);
+                //             // Upload the file to Firebase Storage
+                //             try
+                //             {
+                //                 using (var stream = imageFile.OpenReadStream())
+                //                 {
+                //                     var task = await firebaseStorage
+                //                         .Child(storagePath)
+                //                         .PutAsync(stream);
 
-							using (var httpClient = new HttpClient())
-							{
-                                string doubleEncodedURL = WebUtility.UrlEncode(task);
-                                var apiUrl = @$"http://www.apigateway.somee.com/ImaggaDal?url={doubleEncodedURL}&category={null}";
-								var response = await httpClient.GetAsync(apiUrl);
+                //using (var httpClient = new HttpClient())
+                //{
+                //                         string doubleEncodedURL = WebUtility.UrlEncode(task);
+                //                         var apiUrl = @$"http://www.apigateway.somee.com/ImaggaDal?url={doubleEncodedURL}&category={null}";
+                //	var response = await httpClient.GetAsync(apiUrl);
 
-								if (response.IsSuccessStatusCode)
-								{
-									var responseContent = await response.Content.ReadAsStringAsync();
-									// Handle the response content here.
-									if (responseContent == "true")
-									{
-										TempData["isImageConfirm"] = true;
-										flavor.FlavorUrl = task;
-									}
-									else
-										TempData["isImageConfirm"] = false;
-									// downloadUrl כאן יכיל את ה-URL לתמונה שהועלתה
-								}
-								else
-								{
-									// Handle the case when the request is not successful.
-									// You can check the response status code and take appropriate action.
-								}
-							}
-							//gateway api call
-							
-                            //var responseJson = new WebClient().DownloadString(apiUrl);
+                //	if (response.IsSuccessStatusCode)
+                //	{
+                //		var responseContent = await response.Content.ReadAsStringAsync();
+                //		// Handle the response content here.
+                //		if (responseContent == "true")
+                //		{
+                //			TempData["isImageConfirm"] = true;
+                //			flavor.FlavorUrl = task;
+                //		}
+                //		else
+                //			TempData["isImageConfirm"] = false;
+                //		// downloadUrl כאן יכיל את ה-URL לתמונה שהועלתה
+                //	}
+                //	else
+                //	{
+                //		// Handle the case when the request is not successful.
+                //		// You can check the response status code and take appropriate action.
+                //	}
+                //}
+                ////gateway api call
 
-                            
-                        }
-                        _context.Add(flavor);
+                //                     //var responseJson = new WebClient().DownloadString(apiUrl);
+
+
+                //                 }
+                flavor.FlavorUrl = ImageUrl;
+                _context.Add(flavor);
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(Index));
                     }
-                    catch (Exception ex)
-                    {
-                        // טיפול בשגיאה במידה וההעלאה נכשלה
-                        Console.WriteLine("Exception was thrown: {0}", ex);
-                    }
-                }
-            }
+                   
+                
+            
             return View(flavor);
         }
 
