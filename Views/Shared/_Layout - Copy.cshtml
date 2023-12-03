@@ -1,101 +1,115 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"] - FROZEN</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery-js/1.4.0/css/lightgallery.min.css">
-    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="shortcut icon" href="~/images/favicon.png" type="image/x-icon">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@ViewData["Title"] - FROZEN</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery-js/1.4.0/css/lightgallery.min.css">
+	<link href="~/css/bootstrap.min.css" rel="stylesheet" />
+	<link rel="shortcut icon" href="~/images/favicon.png" type="image/x-icon">
 
-    <style>
-        .content-container {
-            display: flex;
-            flex-direction: row;
-        }
-    </style>
+	<style>
+		.content-container {
+			display: flex;
+			flex-direction: row;
+		}
+	</style>
 
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-        <div class="container">
-            <a asp-area="" asp-action="Index" asp-controller="Home" class="logo">
-                <img src="~/images/logo1.png" alt="Ice cream logo" style="max-height: 60px" />
-            </a>
+	<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+		<div class="container">
+			<a asp-area="" asp-action="Index" asp-controller="Home" class="logo">
+				<img src="~/images/logo1.png" alt="Ice cream logo" style="max-height: 60px" />
+			</a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
-                    aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+					aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
 
-            <div class="collapse navbar-collapse" id="navbarColor01">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-action="Index" asp-controller="Home">Home</a>
-                    </li>
+			<div class="collapse navbar-collapse" id="navbarColor01">
+				<ul class="navbar-nav me-auto">
+					<li class="nav-item">
+						<a class="nav-link" asp-action="Index" asp-controller="Home">Home</a>
+					</li>
 
-                    @if (User.IsInRole("User"))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="ProductsMenu" asp-controller="Products">Menu</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="Index" asp-controller="Orders">Previous Orders</a>
-                        </li>
-                    }
+					@if (User.IsInRole("User"))
+					{
+						<li class="nav-item">
+							<a class="nav-link" asp-action="ProductsMenu" asp-controller="Products">Menu</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" asp-action="Index" asp-controller="Orders">Previous Orders</a>
+						</li>
+					}
 
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="Index" asp-controller="Products">Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="Index" asp-controller="Flavors">Flavors</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="Index" asp-controller="DataAnalysis">Data Analysis</a>
-                        </li>
-                    }
+					@if (User.IsInRole("Admin"))
+					{
+						<li class="nav-item">
+							<a class="nav-link" asp-action="Index" asp-controller="Products">Products</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" asp-action="Index" asp-controller="Flavors">Flavors</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" asp-action="Index" asp-controller="DataAnalysis">Data Analysis</a>
+						</li>
+					}
 
-                </ul>
-                <ul class="navbar-nav ml-auto d-flex align-items-center">
-                    <!-- User Icon with Login Partial -->
-                    <li class="nav-item">
-                        <partial name="_LoginPartial" />
-                    </li>
+				</ul>
+				<ul class="navbar-nav ml-auto d-flex align-items-center">
+					<!-- User Icon with Login Partial -->
+					<li class="nav-item">
+						<partial name="_LoginPartial" />
+					</li>
 
-                    <!-- Shopping Cart Icon with Action and Controller -->
-                    <li class="nav-item">
-                        <a asp-action="Cart" asp-controller="OrderItems" class="nav-link">
-                            <div style="display: flex; align-items: center;">
-                                <img src="/images/shoppingCartSign.png" alt="Shopping Cart" height="90" width="90" />
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+					<!-- Shopping Cart Icon with Action and Controller -->
+					<li class="nav-item">
+						<a asp-action="Cart" asp-controller="OrderItems" class="nav-link">
+							<div style="display: flex; align-items: center;">
+								<img src="/images/shoppingCartSign.png" alt="Shopping Cart" height="90" width="90" />
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
 
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <section class="header"style="color:white">
-                </section>
-            </div>
-        </nav>
-    </header>
+	@{
+		
+		bool isHebrewHoliday = await APICallsController.IsHebrewHolidayAsync();
 
 
-            @RenderBody()
+		if (isHebrewHoliday)
+		{
+			<div style="background: linear-gradient(80deg, #573980, #FF6B98);">
+				<h2 style="margin-top:0px; padding: 4px; padding-bottom: 0px; color: white;"><i>Frosty Delights Await!</i></h2>
+				<h3 style="padding: 3px; padding-top: 0px; color: white; margin-left: 15%;">Don't Miss Our Holiday <b>Ice Cream Sale!</b></h3>
+			</div>
+		}
+		else
+		{
+			<header>
+				<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+					<div class="container-fluid">
+						<section class="header" style="color:white">
+						</section>
+					</div>
+				</nav>
+			</header>
+		}		
+	}
+	@RenderBody()
 
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

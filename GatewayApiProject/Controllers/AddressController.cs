@@ -17,10 +17,24 @@ namespace GatewayApiProject.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetAddress")]
+		public static async Task<string> Translate(string input)
+		{
+			var apiEndpoint = String.Format("https://translate.googleapis.com/translate_a/single?client=gtx&sl={0}&tl={1}&dt=t&q={2}", "en", "he", Uri.EscapeUriString(input));
+
+			using (var client = new HttpClient())
+			{
+				var response = await client.GetStringAsync(apiEndpoint);
+				var data = JsonSerializer.Deserialize<List<object>>(response);
+				return ((JsonElement)data[0]).EnumerateArray().First().EnumerateArray().First().GetString(); ;
+			}
+		}
+
+		[HttpGet(Name = "GetAddress")]
         public bool Get(string city, string street)
         {
-            Location location = new() { City = city, Street = street};
+			city = Translate(city).Result;
+			street = Translate(street).Result;
+			Location location = new() { City = city, Street = street};
             //get address from api call
             var resource_id = "bf185c7f-1a4e-4662-88c5-fa118a244bda";
             var apiEndpoint = $"https://data.gov.il/api/3/action/datastore_search?resource_id={resource_id}&q={location.City}&limit=50000";
