@@ -116,7 +116,8 @@ namespace CloudComputingProject.Controllers
             }
             catch (Exception ex)
             {
-                return View("Error");
+                return View();
+                // return View("Error");
             }
         }
         //מחזיר את  הטוטאלי של המכירות. גרף 1
