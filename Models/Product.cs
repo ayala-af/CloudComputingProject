@@ -8,6 +8,7 @@ namespace CloudComputingProject.Models
     {
         IceCream,
         Frozen,
+        Slushi,
         Other
     }
    
