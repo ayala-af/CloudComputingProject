@@ -8,6 +8,6 @@ namespace CloudComputingProject.Data
         public string? LastName { get; set; }
         public string? City { get; set; }
         public string? Street { get; set; }
-        public int? HouseNumber { get; set; } //לבקוד אם זה בעייתי שזה לא נאלאייבל
+        public int? HouseNumber { get; set; } 
     }
 }

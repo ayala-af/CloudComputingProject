@@ -17,7 +17,7 @@
 
 
 <head>
-    <title>סרט מחולק לחתיכות</title>
+    <title>Cut strip</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -62,7 +62,6 @@
    </div>
  
     <script>
-        // המרת מערכים C# למערכים ב-JavaScript
         var productNames = @Html.Raw(Json.Serialize(productNames));
         var totalOrders = @Html.Raw(Json.Serialize(totalOrders));
         var flavorProductNames = @Html.Raw(Json.Serialize(flavorProductNames));
@@ -83,7 +82,7 @@
             data: data
         });
 
-        var myChart1; // המשתנה myChart1 מוגדר מחוץ לפונקציה
+        var myChart1; 
         var canvas1 = document.getElementById('myChart1');
         var ctx1 = canvas1.getContext('2d');
 

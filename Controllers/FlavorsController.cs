@@ -199,7 +199,6 @@ namespace CloudComputingProject.Controllers
                 //		}
                 //		else
                 //			TempData["isImageConfirm"] = false;
-                //		// downloadUrl כאן יכיל את ה-URL לתמונה שהועלתה
                 //	}
                 //	else
                 //	{

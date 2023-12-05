@@ -112,7 +112,6 @@ namespace CloudComputingProject.Controllers
 
 
                             product.Url = task;
-                            // downloadUrl כאן יכיל את ה-URL לתמונה שהועלתה
                         }
                         // Update the Product1 entity's ImageUrl property with the URL of the saved image
 
@@ -124,7 +123,6 @@ namespace CloudComputingProject.Controllers
                     }
                     catch (Exception ex)
                     {
-                        // טיפול בשגיאה במידה וההעלאה נכשלה
                         Console.WriteLine("Exception was thrown: {0}", ex);
                     }
 

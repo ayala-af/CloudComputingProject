@@ -64,11 +64,11 @@ namespace CloudComputingProject.Controllers
 
                 var productFlavors = productOrders
                     .Select(item => item.Flavors
-                            .GroupBy(flavor => flavor) // קבץ לפי שם הטעם
+                            .GroupBy(flavor => flavor) 
                             .Select(group => new
                             {
-                                FlavorId = group.Key, // השם של הטעם
-                                FlavorCount = group.Count() // כמות הטעמים של אותו השם
+                                FlavorId = group.Key, //flavor name
+                                FlavorCount = group.Count() 
                             }).ToArray()
                             ).ToArray();
                 var flavorProductNames = productFlavors.Select(fo => fo.Select(f => _context.Flavors.Where(f1 => f1.Id.ToString()==f.FlavorId).First().FlavorName).ToArray()).ToList();
@@ -120,7 +120,7 @@ namespace CloudComputingProject.Controllers
                 // return View("Error");
             }
         }
-        //מחזיר את  הטוטאלי של המכירות. גרף 1
+        //return total of sales graph 1
         private int[] GetTotalOrders(List<Order> orders)
         {
             var productOrders = orders

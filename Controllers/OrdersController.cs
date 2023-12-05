@@ -78,7 +78,7 @@ namespace CloudComputingProject.Controllers
             var user = await _userManager.FindByIdAsync(userId);
 
 
-            // צרוך את המידע מהמשתמש והמודל שלו כמו שעשית בטופס
+            
             order.ClientFirstName = user.FirstName;
             order.ClientLastName = user.LastName;
             order.PhoneNumber = user.PhoneNumber;
