@@ -1,7 +1,6 @@
 # Frozen - Ice Cream Online Store
 
-Welcome to "Frozen", a collaborative team project developed as part of a Cloud Computing course. This hands-on experience allowed our team to delve into creating a comprehensive Ice Cream Online Store, encompassing various technologies and concepts. Throughout the development process, we focused on creating a seamless experience for both administrators and regular users.
-This project is a result of collaborative efforts in our Cloud Computing course. It leverages cloud computing as the backbone of its infrastructure, ensuring scalability, efficiency, and accessibility. The architecture adheres to a clean separation of concerns and incorporates clean code practices, emphasizing maintainability and extensibility.
+Welcome to "Frozen", a collaborative team project developed as part of a Cloud Computing course. This hands-on experience allowed our team to delve into creating a comprehensive Ice Cream Online Store, encompassing various technologies and concepts.
 
 ## Technologies Used
 
